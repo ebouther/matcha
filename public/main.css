@@ -1,0 +1,19 @@
+body
+{
+  padding-top: 70px;
+}
+
+footer
+{
+  margin: 50px 0;
+}
+
+.btn-edit
+{
+  float: right;
+  clear: both;
+}
+
+#profile_pic {
+  width: 50vw;
+}

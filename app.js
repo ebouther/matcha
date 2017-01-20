@@ -17,13 +17,25 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(express.static(path.join(__dirname, 'user')));
+app.use(express.static(path.join(__dirname, 'public')));
+
+function loadUserProfile (req, res) {
+  mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
+    assert.equal(null, err);
+    assert.ok(db != null);
+    db.collection("users").findOne({username: req.session.username}, {password: 0, _id: 0}, function(err, doc) {
+      console.log(doc);
+      res.render(__dirname + '/public/main.ejs', doc);
+    });
+  });
+}
 
 app.get('/', function (req, res) {
-  if (req.session.login) {
-    res.render(__dirname + '/user/main.ejs');
+  if (req.session.username) {
+    loadUserProfile(req, res);
+    //res.render(__dirname + '/public/main.ejs', getUserProfile());
   } else {
-    res.render(__dirname + '/user/home.ejs', { alert: false});
+    res.render(__dirname + '/public/home.ejs', { alert: false});
   }
 });
 
@@ -47,18 +59,62 @@ app.post('/login', function (req, res) {
          if(error)
              throw new Error('Something went wrong!');
          if(!verified) {
-           res.render(__dirname + '/user/home.ejs',
+           res.render(__dirname + '/public/home.ejs',
              {alert: true,
              alert_type: "alert-warning",
              alert_msg: "<strong>Warning !</strong> Wrong password."});
              return;
          } else {
-          req.session.login = req.body.username;
+          req.session.username = req.body.username;
           res.redirect('/');
           return;
          }
       });
     });
+  });
+});
+
+app.post('/profile', function (req, res) {
+  mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
+    assert.equal(null, err);
+    assert.ok(db != null);
+    switch (req.body.field) {
+      case "email":
+        db.collection("users").update(
+          {username: req.session.username},
+          {$set: {email: req.body.content}},
+          { upsert : true }
+        );
+        break;
+      case "biography":
+        db.collection("users").update(
+          {username: req.session.username},
+          {$set: {biography: req.body.content}},
+          { upsert : true }
+        );
+        break;
+        case "gender":
+          db.collection("users").update(
+            {username: req.session.username},
+            {$set: {gender: req.body.content}},
+            { upsert : true }
+          );
+          break;
+        case "sex_pref":
+          db.collection("users").update(
+            {username: req.session.username},
+            {$set: {sex_pref: req.body.content}},
+            { upsert : true }
+          );
+          break;
+        case "interests":
+          db.collection("users").update(
+            {username: req.session.username},
+            {$set: {interests: req.body.content}},
+            { upsert : true }
+          );
+          break;
+    }
   });
 });
 
@@ -70,7 +126,7 @@ app.post('/register', function (req, res) {
   pass = req.body.password;
 
   if (pass !== req.body['confirm-password']) {
-    res.render(__dirname + '/user/home.ejs',
+    res.render(__dirname + '/public/home.ejs',
       {alert: true,
       alert_type: "alert-warning",
       alert_msg: "<strong>Warning !</strong> Password confirmation and password are different."});
@@ -81,7 +137,7 @@ app.post('/register', function (req, res) {
       || !/[a-z]/.test(pass)
       || !/[A-Z]/.test(pass)
       || !/[0-9]/.test(pass)) {
-    res.render(__dirname + '/user/home.ejs',
+    res.render(__dirname + '/public/home.ejs',
       {alert: true,
       alert_type: "alert-warning",
       alert_msg: "<strong>Warning !</strong> Password not secure," +
@@ -104,18 +160,21 @@ app.post('/register', function (req, res) {
               "password": hash,
               "email": email,
               "firstname": firstname,
-              "lastname": lastname},
+              "lastname": lastname,
+              "biography": "",
+              "interests": "",
+              },
               function (err, resp) {
                 if (err)
                   throw err;
-                res.render(__dirname + '/user/home.ejs',
+                res.render(__dirname + '/public/home.ejs',
                   {alert: true,
                   alert_type: "alert-success",
                   alert_msg: "<strong>Success !</strong> Account was created."});
                   return;
               });
         } else {
-          res.render(__dirname + '/user/home.ejs',
+          res.render(__dirname + '/public/home.ejs',
             {alert: true,
             alert_type: "alert-warning",
             alert_msg: "<strong>Warning !</strong> Username already taken."});
