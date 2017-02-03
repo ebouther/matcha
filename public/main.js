@@ -1,4 +1,6 @@
 $(document).ready(function() {
+  editProfileField("edit-firstname", "firstname");
+  editProfileField("edit-lastname", "lastname");
   editProfileField("edit-email", "email");
   editProfileField("edit-biography", "biography");
   editProfileField("edit-interests", "interests");

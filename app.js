@@ -33,7 +33,6 @@ function loadUserProfile (req, res) {
 app.get('/', function (req, res) {
   if (req.session.username) {
     loadUserProfile(req, res);
-    //res.render(__dirname + '/public/main.ejs', getUserProfile());
   } else {
     res.render(__dirname + '/public/home.ejs', { alert: false});
   }
@@ -48,6 +47,78 @@ app.get('/setup', function (req, res) {
     res.redirect('/');
 });
 
+app.get('/search', function (req, res) {
+  var login = req.query.login;
+  mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
+    assert.equal(null, err);
+    assert.ok(db != null);
+
+  });
+});
+
+function loadProfileSuggestions(db, req, res) {
+  db.collection("users").findOne({username: req.session.username}, {password: 0, _id: 0}, function(err, doc) {
+    if (doc) {
+      switch (doc.sex_pref) {
+        case "Hetero":
+          if (doc.gender === "Male") {
+            console.log("DBG 1");
+              db.collection("users").find({gender: "Female", username: {$ne: req.session.username}}, {password: 0, _id: 0}).toArray(function(err, doc) {
+                res.render(__dirname + '/public/suggestions.ejs', {users: doc});
+              });
+          } else {
+            console.log("DBG 2");
+            db.collection("users").find({gender: "Male", username: {$ne: req.session.username}}, {password: 0, _id: 0}).toArray(function(err, doc) {
+              res.render(__dirname + '/public/suggestions.ejs', {users: doc});
+            });
+          }
+        break;
+        case "Gay":
+          if (doc.gender === "Male") {
+            console.log("DBG 3");
+            db.collection("users").find({gender: "Male", username: {$ne: req.session.username}}, {password: 0, _id: 0}).toArray(function(err, doc) {
+              console.log(doc);
+              res.render(__dirname + '/public/suggestions.ejs', {users: doc});
+            });
+          } else {
+            console.log("DBG 4");
+            db.collection("users").find({gender: "Female", username: {$ne: req.session.username}}, {password: 0, _id: 0}).toArray(function(err, doc) {
+              res.render(__dirname + '/public/suggestions.ejs', {users: doc});
+            });
+          }
+        break;
+        default:
+          console.log("DBG 5");
+          db.collection("users").find({username: {$ne: req.session.username}}, {password: 0, _id: 0}).toArray(function(err, doc) {
+            res.render(__dirname + '/public/suggestions.ejs', {users: doc});
+          });
+      }
+    }
+  });
+}
+
+app.get('/suggestions', function (req, res) {
+  if (!req.session.username)
+  {
+    res.redirect('/');
+    return;
+  }
+  mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
+    assert.equal(null, err);
+    assert.ok(db != null);
+    if (req.query.username) {
+      db.collection("users").findOne({username: req.query.username}, {password: 0, _id: 0}, function(err, doc) {
+        if (doc)
+          res.render(__dirname + '/public/suggestions.ejs', {users: [doc]});
+        else {
+          res.render(__dirname + '/public/suggestions.ejs');
+        }
+      });
+    } else {
+      loadProfileSuggestions(db, req, res);
+    }
+  });
+});
 
 app.post('/login', function (req, res) {
 
@@ -55,10 +126,19 @@ app.post('/login', function (req, res) {
     assert.equal(null, err);
     assert.ok(db != null);
     db.collection("users").findOne({username: req.body.username}, {password: 1, _id: 0}, function(err, doc) {
+      if (err)
+          throw new Error('Something went wrong!');
+      if (!doc) {
+        res.render(__dirname + '/public/home.ejs',
+          {alert: true,
+          alert_type: "alert-warning",
+          alert_msg: "<strong>Warning !</strong> Bad username."});
+          return;
+      }
       password(req.body.password).verifyAgainst(doc.password, function(error, verified) {
-         if(error)
+         if (error)
              throw new Error('Something went wrong!');
-         if(!verified) {
+         if (!verified) {
            res.render(__dirname + '/public/home.ejs',
              {alert: true,
              alert_type: "alert-warning",
@@ -93,27 +173,41 @@ app.post('/profile', function (req, res) {
           { upsert : true }
         );
         break;
-        case "gender":
-          db.collection("users").update(
-            {username: req.session.username},
-            {$set: {gender: req.body.content}},
-            { upsert : true }
-          );
-          break;
-        case "sex_pref":
-          db.collection("users").update(
-            {username: req.session.username},
-            {$set: {sex_pref: req.body.content}},
-            { upsert : true }
-          );
-          break;
-        case "interests":
-          db.collection("users").update(
-            {username: req.session.username},
-            {$set: {interests: req.body.content}},
-            { upsert : true }
-          );
-          break;
+      case "gender":
+        db.collection("users").update(
+          {username: req.session.username},
+          {$set: {gender: req.body.content}},
+          { upsert : true }
+        );
+        break;
+      case "sex_pref":
+        db.collection("users").update(
+          {username: req.session.username},
+          {$set: {sex_pref: req.body.content}},
+          { upsert : true }
+        );
+        break;
+      case "interests":
+        db.collection("users").update(
+          {username: req.session.username},
+          {$set: {interests: req.body.content}},
+          { upsert : true }
+        );
+        break;
+      case "firstname":
+        db.collection("users").update(
+          {username: req.session.username},
+          {$set: {firstname: req.body.content}},
+          { upsert : true }
+        );
+        break;
+      case "lastname":
+        db.collection("users").update(
+          {username: req.session.username},
+          {$set: {lastname: req.body.content}},
+          { upsert : true }
+        );
+        break;
     }
   });
 });
