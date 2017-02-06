@@ -1,0 +1,122 @@
+var session = require('express-session');
+var express = require('express');
+var app = express();
+var path = require('path');
+var assert = require('assert');
+
+var mongodb = require('mongodb');
+
+var password = require('password-hash-and-salt');
+
+
+app.set('view engine', 'ejs');
+
+app.use('/', require("./routes"));
+
+app.use(session({secret: 'ksljflksdfj',
+                resave: false,
+                saveUninitialized: false}));
+
+var bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+
+app.post('/login', function (req, res) {
+
+  mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
+    assert.equal(null, err);
+    assert.ok(db != null);
+    db.collection("users").findOne({username: req.body.username}, {password: 1, _id: 0}, function(err, doc) {
+      if (err)
+          throw new Error('Something went wrong!');
+      if (!doc) {
+        res.render(__dirname + '/public/index.ejs',
+          {alert: true,
+          alert_type: "alert-warning",
+          alert_msg: "<strong>Warning !</strong> Bad username."});
+          return;
+      }
+      password(req.body.password).verifyAgainst(doc.password, function(error, verified) {
+         if (error)
+             throw new Error('Something went wrong!');
+         if (!verified) {
+           res.render(__dirname + '/public/index.ejs',
+             {alert: true,
+             alert_type: "alert-warning",
+             alert_msg: "<strong>Warning !</strong> Wrong password."});
+             return;
+         } else {
+          req.session.username = req.body.username;
+          res.redirect('/');
+          return;
+         }
+      });
+    });
+  });
+});
+
+app.post('/profile', function (req, res) {
+  mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
+    assert.equal(null, err);
+    assert.ok(db != null);
+    switch (req.body.field) {
+      case "email":
+        db.collection("users").update(
+          {username: req.session.username},
+          {$set: {email: req.body.content}},
+          { upsert : true }
+        );
+        break;
+      case "biography":
+        db.collection("users").update(
+          {username: req.session.username},
+          {$set: {biography: req.body.content}},
+          { upsert : true }
+        );
+        break;
+      case "gender":
+        db.collection("users").update(
+          {username: req.session.username},
+          {$set: {gender: req.body.content}},
+          { upsert : true }
+        );
+        break;
+      case "sex_pref":
+        db.collection("users").update(
+          {username: req.session.username},
+          {$set: {sex_pref: req.body.content}},
+          { upsert : true }
+        );
+        break;
+      case "interests":
+        db.collection("users").update(
+          {username: req.session.username},
+          {$set: {interests: req.body.content}},
+          { upsert : true }
+        );
+        break;
+      case "firstname":
+        db.collection("users").update(
+          {username: req.session.username},
+          {$set: {firstname: req.body.content}},
+          { upsert : true }
+        );
+        break;
+      case "lastname":
+        db.collection("users").update(
+          {username: req.session.username},
+          {$set: {lastname: req.body.content}},
+          { upsert : true }
+        );
+        break;
+    }
+  });
+});
+
+
+app.listen(3000, function () {
+  console.log('Example app listening on port 3000!');
+});
