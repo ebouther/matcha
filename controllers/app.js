@@ -11,8 +11,6 @@ var password = require('password-hash-and-salt');
 
 app.set('view engine', 'ejs');
 
-app.use('/', require("./routes"));
-
 app.use(session({secret: 'ksljflksdfj',
                 resave: false,
                 saveUninitialized: false}));
@@ -21,8 +19,18 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(express.static(path.join(__dirname, 'public')));
 
+
+app.use(express.static(path.join(__dirname, '/../public')));
+app.use(express.static(path.join(__dirname, '/../views')));
+console.log(__dirname + '/../public');
+
+
+// -------         INCLUDES          -------- //
+
+app.use('/', require("./routes"));
+
+// ------------------------------------------ //
 
 app.post('/login', function (req, res) {
 
@@ -114,6 +122,69 @@ app.post('/profile', function (req, res) {
         break;
     }
   });
+});
+app.post('/register', function (req, res) {
+  var username = req.body.username,
+  email = req.body.email,
+  firstname = req.body.firstname,
+  lastname = req.body.lastname,
+  pass = req.body.password;
+
+  if (pass !== req.body['confirm-password']) {
+    res.render(__dirname + '/../views/templates/index.ejs',
+      {alert: true,
+      alert_type: "alert-warning",
+      alert_msg: "<strong>Warning !</strong> Password confirmation and password are different."});
+      return;
+  }
+
+  if (pass < 6
+      || !/[a-z]/.test(pass)
+      || !/[A-Z]/.test(pass)
+      || !/[0-9]/.test(pass)) {
+    res.render(__dirname + '/../views/templates/index.ejs',
+      {alert: true,
+      alert_type: "alert-warning",
+      alert_msg: "<strong>Warning !</strong> Password not secure," +
+        " it has to be at least 6 characters long and contain" +
+        " a number an uppercase and a lowercase letter."});
+    return;
+  }
+
+  password(pass).hash(function(error, hash) {
+    mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
+      assert.equal(null, err);
+      assert.ok(db != null);
+      db.collection("users").count({username: username}, function(err, count) {
+        if (err)
+          throw err;
+        if (count == 0)
+        {
+          db.collection("users").insert
+            ({"username": username,
+              "password": hash,
+              "email": email,
+              "firstname": firstname,
+              "lastname": lastname},
+              function (err, resp) {
+                if (err)
+                  throw err;
+                res.render(__dirname + '/../views/templates/index.ejs',
+                  {alert: true,
+                  alert_type: "alert-success",
+                  alert_msg: "<strong>Success !</strong> Account was created."});
+                  return;
+              });
+        } else {
+          res.render(__dirname + '/../views/templates/index.ejs',
+            {alert: true,
+            alert_type: "alert-warning",
+            alert_msg: "<strong>Warning !</strong> Username already taken."});
+            return;
+        }
+      });
+    });
+  })
 });
 
 

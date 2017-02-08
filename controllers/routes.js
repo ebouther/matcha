@@ -1,13 +1,17 @@
 var express = require('express');
 var router = express.Router();
 
+var path = require('path');
+var mongodb = require('mongodb'); //should be only present in models :/
+var assert = require('assert');
+
 var user = require("./user");
 
 router.get('/', function (req, res) {
   if (req.session.username) {
     user.loadProfile(req, res);
   } else {
-    res.render(__dirname + '/public/home.ejs', { alert: false});
+    res.render(path.join(__dirname, '/../views/templates/index.ejs'), { alert: false});
   }
 });
 
@@ -42,13 +46,13 @@ router.get('/suggestions', function (req, res) {
     if (req.query.username) {
       db.collection("users").findOne({username: req.query.username}, {password: 0, _id: 0}, function(err, doc) {
         if (doc)
-          res.render(__dirname + '/public/suggestions.ejs', {users: [doc]});
+          res.render(__dirname + '/../views/templates/suggestions.ejs', {users: [doc]});
         else {
-          res.render(__dirname + '/public/suggestions.ejs');
+          res.render(__dirname + '/../views/templates/suggestions.ejs');
         }
       });
     } else {
-      var greetings = require("./greetings.js");
+      //var greetings = require("./greetings.js"); // What the heck is dat ?? O.o
       user.loadSuggestions(db, req, res);
     }
   });
