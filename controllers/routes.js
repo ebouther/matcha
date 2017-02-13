@@ -58,4 +58,8 @@ router.get('/suggestions', function (req, res) {
   });
 });
 
+router.get('/chat', function (req, res) {
+    res.render(__dirname + '/../views/templates/chat.ejs');
+});
+
 module.exports = router;

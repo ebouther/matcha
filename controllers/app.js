@@ -1,6 +1,9 @@
 var session = require('express-session');
+var sharedsession = require("express-socket.io-session");
 var express = require('express');
 var app = express();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 var path = require('path');
 var assert = require('assert');
 
@@ -20,8 +23,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
-
 app.use(express.static(path.join(__dirname, '/../public')));
+
 app.use(express.static(path.join(__dirname, '/../views')));
 console.log(__dirname + '/../public');
 
@@ -187,7 +190,16 @@ app.post('/register', function (req, res) {
   })
 });
 
+io.use(sharedsession(session, {
+    autoSave:true
+}));
 
-app.listen(3000, function () {
+io.on('connection', function(socket) {
+  socket.on('chat message', function(msg) {
+    io.emit('chat message', msg);
+  });
+});
+
+http.listen(3000, function () {
   console.log('Example app listening on port 3000!');
 });
