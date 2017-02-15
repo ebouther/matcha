@@ -1,5 +1,9 @@
 var session = require('express-session');
-var sharedsession = require("express-socket.io-session");
+//var sharedsession = require("express-socket.io-session");
+
+io.use(function(socket, next) {
+  session(socket.handshake, {}, next);
+});
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
@@ -44,7 +48,7 @@ app.post('/login', function (req, res) {
       if (err)
           throw new Error('Something went wrong!');
       if (!doc) {
-        res.render(__dirname + '/public/index.ejs',
+        res.render(__dirname + '/../views/templates/index.ejs',
           {alert: true,
           alert_type: "alert-warning",
           alert_msg: "<strong>Warning !</strong> Bad username."});
@@ -54,7 +58,7 @@ app.post('/login', function (req, res) {
          if (error)
              throw new Error('Something went wrong!');
          if (!verified) {
-           res.render(__dirname + '/public/index.ejs',
+           res.render(__dirname + '/../views/templates/index.ejs',
              {alert: true,
              alert_type: "alert-warning",
              alert_msg: "<strong>Warning !</strong> Wrong password."});
@@ -190,12 +194,13 @@ app.post('/register', function (req, res) {
   })
 });
 
-io.use(sharedsession(session, {
-    autoSave:true
-}));
+// io.use(sharedsession(session, {
+//     autoSave:true
+// }));
 
 io.on('connection', function(socket) {
   socket.on('chat message', function(msg) {
+    console.log("Chat msg");
     io.emit('chat message', msg);
   });
 });

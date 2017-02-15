@@ -9,5 +9,6 @@ $('#chat').submit(function(e){
 });
 
 socket.on('chat message', function(msg){
+  console.log("message");
   $('#messages').append($('<li>').text(msg));
 });

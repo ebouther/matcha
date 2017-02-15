@@ -1,2 +1,6 @@
 .bootstrap-tagsinput .tag [data-role="remove"] { display: none; }
 .bootstrap-tagsinput input { display: none; }
+
+body {
+    padding-top: 90px;
+}
