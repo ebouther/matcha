@@ -25,12 +25,12 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">Suggestions</a>
+                <a class="navbar-brand" href="/">Home</a>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="/">Home</a>
+                        <a href="suggestions">Suggestions</a>
                     </li>
                 </ul>
             </div>
@@ -49,18 +49,34 @@
                   <div class="row">
                         <div class="col-lg-8" >
                           <div class="well">
-                              <h3>Advanced Search</h3>
-                              <form action="suggestions" method="get" class="input-group">
-
-                                <input type="text" class="span2" value="" data-slider-min="-20" data-slider-max="20" data-slider-step="1" data-slider-value="-14" data-slider-orientation="vertical" data-slider-selection="after"data-slider-tooltip="hide">
-
-                                <input id="ex1" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="14"/>
-                                <br/>
-                                Age: <input id="ex2" type="text" class="span2" value="" data-slider-min="18" data-slider-max="100" data-slider-step="1" data-slider-value="[18,100]"/>
+                            <h3>Advanced Search</h3>
+                            <form id="advanced_search" action="suggestions" method="get" class="input-group">
+                              <div class="form-group">
+                                <div class="col-lg-6">
+                                  Age Range<input type="range" value="18" max="100" min="18" step="1">
+                                  <input type="range" value="100" max="100" min="18" step="1">
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <div class="col-lg-6">
+                                  Popularity Range<input type="range" value="18" max="100" min="18" step="1">
+                                  <input type="range" value="100" max="100" min="18" step="1">
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <div class="col-lg-6">
+                                  Distance max<input type="range" value="18" min="1" max="1000" step="1">
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                  <input id="search_by_tag" type="text" value="" data-role="tagsinput" placeholder="Interests">
+                              </div>
+                              <div class="form-group">
                                 <button class="btn btn-default" type="submit">
                                   <span class="glyphicon glyphicon-search"></span>
                                 </button>
-                              </form>
+                              </div>
+                            </form>
                           </div>
 
                           <%
@@ -128,7 +144,9 @@
                                         <tr>
                                           <td>Interests</td>
                                           <td>
-                                            <input id="interests" type="text" value="" data-role="tagsinput">
+                                            <div id="readonly_tag" class="col-lg-6">
+                                              <input id="interests" type="text" value="" data-role="tagsinput">
+                                            </div>
                                             <script>
                                             <% if (users[i].interests) { %>
                                               $("input#interests").val("<%= users[i].interests %>");

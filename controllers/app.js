@@ -1,9 +1,5 @@
 var session = require('express-session');
 //var sharedsession = require("express-socket.io-session");
-
-io.use(function(socket, next) {
-  session(socket.handshake, {}, next);
-});
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
