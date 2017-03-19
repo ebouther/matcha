@@ -47,6 +47,32 @@ $(document).ready(function() {
         }
       );
     });
+
+    function readURL(input, img_id) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $(img_id).attr('src', e.target.result).fadeIn('slow');
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    for (var i = 1; i <= 5; i++) {
+      (function (i) {
+        $("#upload-pic" + i).change(function(){
+          readURL(this, "#profile-pic" + i);
+        });
+        var pic = $("#profile-pic" + i);
+        pic.click(function(){
+          console.log("'" + pic.attr('src') + "'");
+          if (pic.attr('src') != "")
+            $("#profile-pic").attr("src", pic.prop('src'));
+        });
+      })(i);
+    }
+
 });
 
 function editProfileField(button_id, value_id) {
