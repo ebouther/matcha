@@ -9,7 +9,6 @@ exports.loadProfile = function (req, res) {
     assert.equal(null, err);
     assert.ok(db != null);
     db.collection("users").findOne({username: req.session.username}, {password: 0, _id: 0}, function(err, doc) {
-      console.log(doc);
       res.render(__dirname + '/../views/templates/main.ejs', doc);
     });
   });
@@ -55,4 +54,5 @@ exports.loadSuggestions = function (db, req, res) {
       }
     }
   });
+
 }

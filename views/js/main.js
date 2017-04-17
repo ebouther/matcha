@@ -48,27 +48,47 @@ $(document).ready(function() {
       );
     });
 
-    function readURL(input, img_id) {
+    function readURL(input, img_id, index) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
 
             reader.onload = function (e) {
                 $(img_id).attr('src', e.target.result).fadeIn('slow');
+                console.log("SIZE:" + input.files[0].size);
+                if (input.files[0].size < 2000000) {
+                  $.post('profile',
+                    {
+                      field: "picture",
+                      content: reader.result,
+                      index: index
+                    }
+                  );
+                } else {
+                  alert("Image too big to be saved");
+                }
             }
             reader.readAsDataURL(input.files[0]);
+            console.log("INPUT FILE " + JSON.stringify(input.files[0]));
         }
     }
 
     for (var i = 1; i <= 5; i++) {
       (function (i) {
         $("#upload-pic" + i).change(function(){
-          readURL(this, "#profile-pic" + i);
+          readURL(this, "#profile-pic" + i, i);
         });
         var pic = $("#profile-pic" + i);
         pic.click(function(){
           console.log("'" + pic.attr('src') + "'");
-          if (pic.attr('src') != "")
+          if (pic.attr('src') != "") {
             $("#profile-pic").attr("src", pic.prop('src'));
+            $.post('profile',
+              {
+                field: "profile_pic",
+                content: i,
+              }
+            );
+          }
         });
       })(i);
     }

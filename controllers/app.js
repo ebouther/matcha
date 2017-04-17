@@ -11,6 +11,9 @@ var mongodb = require('mongodb');
 
 var password = require('password-hash-and-salt');
 
+var bodyParser = require('body-parser');
+
+app.use(bodyParser.urlencoded({limit: '5mb'}));
 
 app.set('view engine', 'ejs');
 
@@ -18,7 +21,6 @@ app.use(session({secret: 'ksljflksdfj',
                 resave: false,
                 saveUninitialized: false}));
 
-var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -123,9 +125,29 @@ app.post('/profile', function (req, res) {
           { upsert : true }
         );
         break;
+      case "picture":
+        var obj = {};
+        var field = 'picture' + req.body.index;
+        obj[field] = req.body.content;
+
+        db.collection("users").update(
+          {username: req.session.username},
+          {$set: obj},
+          { upsert : true }
+        );
+        break;
+      case "profile_pic":
+        console.log("PROFILE PIC");
+        db.collection("users").update(
+          {username: req.session.username},
+          {$set: {profile_pic: req.body.content}},
+          { upsert : true }
+        );
+        break;
     }
   });
 });
+
 app.post('/register', function (req, res) {
   var username = req.body.username,
   email = req.body.email,

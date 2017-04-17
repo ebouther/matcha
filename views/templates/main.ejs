@@ -61,10 +61,24 @@
                               <div class="row">
                                 <div class="col-md-3 col-lg-3 " align="center">
                                   <img id="profile-pic" alt="profile picture"
-                                    src="<%if (this.profile_pic) {%>
-                                          <%= profile_pic %>
-                                       <% } else { %>
-                                          img/profile_default.jpg
+                                    src="<% switch (locals.profile_pic) {
+                                            case '0': %>
+                                          <%= picture0 %>
+                                          <%  break; %>
+                                          <% case '1': %>
+                                          <%= picture1 %>
+                                          <%  break; %>
+                                          <% case '2': %>
+                                          <%= picture2 %>
+                                          <%  break; %>
+                                          <% case '3': %>
+                                          <%= picture3 %>
+                                          <%  break; %>
+                                          <% case '4': %>
+                                          <%= picture4 %>
+                                          <%  break; %>
+                                          <% default: %>
+                                            img/profile_default.jpg
                                        <% } %>"
                                     class="img-circle img-responsive">
                                 </div>
@@ -145,25 +159,35 @@
                                   </table>
                                   <div class="row">
                                     <div class="col-md-6">
-                                      <img src="" id="profile-pic1" class="profile-pic">
+                                      <img <% if (locals.picture1) { %>
+                                        src="<%= picture1 %>"
+                                      <% } %> id="profile-pic1" class="profile-pic">
                                       <input type="file" id="upload-pic1" class="">
                                     </div>
                                     <div class="col-md-6">
-                                      <img src="" id="profile-pic2" class="profile-pic">
+                                      <img <% if (locals.picture2) { %>
+                                        src="<%= picture2 %>"
+                                      <% } %> id="profile-pic2" class="profile-pic">
                                       <input type="file" id="upload-pic2" class="">
                                     </div>
                                   </div>
                                   <div class="row">
                                     <div class="col-md-4">
-                                      <img src="" id="profile-pic3" class="profile-pic">
+                                      <img <% if (locals.picture3) { %>
+                                        src="<%= picture3 %>"
+                                      <% } %> id="profile-pic3" class="profile-pic">
                                       <input type="file" id="upload-pic3" class="">
                                     </div>
                                     <div class="col-md-4">
-                                      <img src="" id="profile-pic4" class="profile-pic">
+                                      <img <% if (locals.picture4) { %>
+                                        src="<%= picture4 %>"
+                                      <% } %> id="profile-pic4" class="profile-pic">
                                       <input type="file" id="upload-pic4" class="">
                                     </div>
                                     <div class="col-md-4">
-                                      <img src="" id="profile-pic5" class="profile-pic">
+                                      <img <% if (locals.picture5) { %>
+                                        src="<%= picture5 %>"
+                                      <% } %> id="profile-pic5" class="profile-pic">
                                       <input type="file" id="upload-pic5" class="">
                                     </div>
                                   </div>
