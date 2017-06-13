@@ -1,0 +1,18 @@
+#readonly_tag .bootstrap-tagsinput .tag [data-role="remove"] { display: none; }
+#readonly_tag .bootstrap-tagsinput input { display: none; }
+
+.form-group {
+  text-align: center;
+}
+
+body {
+    padding-top: 90px;
+}
+
+#advanced_search {
+  width: 100%;
+}
+
+.input-group {
+    display: block;
+}

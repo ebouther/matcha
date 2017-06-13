@@ -122,3 +122,5 @@ function editProfileField(button_id, value_id) {
       $('#' + value_id).text(content);
   });
 }
+
+new google.maps.places.Autocomplete(document.getElementById('geoloc'));

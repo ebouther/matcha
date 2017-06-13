@@ -100,7 +100,7 @@ app.post('/profile', function (req, res) {
       case "sex_pref":
         db.collection("users").update(
           {username: req.session.username},
-          {$set: {sex_pref: req.body.content}},
+          {$set: {sex_pfref: req.body.content}},
           { upsert : true }
         );
         break;
@@ -190,7 +190,9 @@ app.post('/register', function (req, res) {
               "password": hash,
               "email": email,
               "firstname": firstname,
-              "lastname": lastname},
+              "lastname": lastname,
+              "biography": "",
+              "history": []},
               function (err, resp) {
                 if (err)
                   throw err;
@@ -223,6 +225,6 @@ io.on('connection', function(socket) {
   });
 });
 
-http.listen(3000, function () {
+http.listen(8000, function (res) {
   console.log('Example app listening on port 3000!');
 });

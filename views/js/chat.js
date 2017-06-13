@@ -1,5 +1,5 @@
 var socket = io();
-  console.log("Submit 1");
+
 $('#chat').submit(function(e){
   e.preventDefault();
   console.log("Submit");
@@ -11,4 +11,8 @@ $('#chat').submit(function(e){
 socket.on('chat message', function(msg){
   console.log("message");
   $('#messages').append($('<li>').text(msg));
+});
+
+socket.on('notif', function(msg){
+  console.log("notif (" + msg + ")");
 });

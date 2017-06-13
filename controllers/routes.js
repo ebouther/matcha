@@ -15,6 +15,24 @@ router.get('/', function (req, res) {
   }
 });
 
+router.get('/user', function (req, res) {
+  if (req.session.username) {
+  	var db = new mongodb.Db('matcha', new mongodb.Server('localhost', 27017));
+	  mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
+      assert.equal(null, err);
+      assert.ok(db != null);
+      if (req.query.username) {
+      	db.collection("users").findOneAndUpdate({username: req.query.username}, {$push: {"history": "Viewed by " + req.session.username}}, {upsert: true, projection:{password: 0, _id: 0}}, function(err, doc) {
+      	  if (doc)
+      	    res.render(path.join(__dirname, '/../views/templates/user.ejs'), {user: doc});
+      	});
+      }
+    });
+  } else {
+    res.render(path.join(__dirname, '/../views/templates/index.ejs'), { alert: false});
+  }
+});
+
 //  ------ useless
 router.get('/setup', function (req, res) {
   var db = new mongodb.Db('matcha', new mongodb.Server('localhost', 27017));

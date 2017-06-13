@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="http://bootstrap-tagsinput.github.io/bootstrap-tagsinput/dist/bootstrap-tagsinput.css">
 
-    <link rel="stylesheet" type="text/css" href="css/suggestions.css"/>
+    <link rel="stylesheet" type="text/css" href="css/user.css"/>
 </head>
 
 <body>
@@ -48,57 +48,80 @@
                 <div class="container">
                   <div class="row">
                         <div class="col-lg-8" >
-                          <div class="well">
-                            <h3>Advanced Search</h3>
-                            <form id="advanced_search" action="suggestions" method="get" class="input-group">
-                              <div class="form-group">
-                                <div class="col-lg-6">
-                                  Age Range<input type="range" value="18" max="100" min="18" step="1">
-                                  <input type="range" value="100" max="100" min="18" step="1">
-                                </div>
-                              </div>
-                              <div class="form-group">
-                                <div class="col-lg-6">
-                                  Popularity Range<input type="range" value="18" max="100" min="18" step="1">
-                                  <input type="range" value="100" max="100" min="18" step="1">
-                                </div>
-                              </div>
-                              <div class="form-group">
-                                <div class="col-lg-6">
-                                  Distance max<input type="range" value="18" min="1" max="1000" step="1">
-                                </div>
-                              </div>
-                              <div class="form-group">
-                                  <input id="search_by_tag" type="text" value="" data-role="tagsinput" placeholder="Interests">
-                              </div>
-                              <div class="form-group">
-                                <button class="btn btn-default" type="submit">
-                                  <span class="glyphicon glyphicon-search"></span>
-                                </button>
-                              </div>
-                            </form>
-                          </div>
-
-                          <%
-                            if (locals.users)
-                              for (var i=0; i < users.length; i++) {
-                          %>
-                          <div class="col-md-3 col-lg-3 " align="center">
-                          <div class="panel panel-info" onclick="javascript:location.href='user?username=<%= users[i].username %>'">
+                          <div class="panel panel-info" onclick="javascript:location.href='user?username=<%= user.username %>'">
                             <div class="panel-heading">
-                              <h3 class="panel-title"><%= users[i].firstname + " " + users[i].lastname %></h3>
+                              <h3 class="panel-title"><%= user.firstname + " " + user.lastname %></h3>
                             </div>
                             <div class="panel-body">
                               <div class="row">
-
+                                <div class="col-md-3 col-lg-3 " align="center">
                                   <img id="profile_pic" alt="profile picture"
-                                    src="<%if (users[i].profile_pic) {%>
-                                          <%= users[i].profile_pic %>
+                                    src="<%if (user.profile_pic) {%>
+                                          <%= user.profile_pic %>
                                        <% } else { %>
                                           img/profile_default.jpg
                                        <% } %>"
                                     class="img-circle img-responsive">
-
+                                </div>
+                                  <div class=" col-md-9 col-lg-9 ">
+                                    <table class="table table-user-information">
+                                      <tbody>
+                                        <tr>
+                                          <td>Username:</td>
+                                          <td><%= user.username %></td>
+                                        </tr>
+                                        <tr>
+                                          <td>Firstname:</td>
+                                          <td><span id="firstname"><%= user.firstname %></span></td>
+                                        </tr>
+                                        <tr>
+                                          <td>Lastname:</td>
+                                          <td><span id="lastname"><%= user.lastname %></span></td>
+                                        </tr>
+                                        <tr>
+                                          <td>Gender:</td>
+                                          <td>
+                                            <span id="gender">
+                                              <% if (user.gender) { %>
+                                                <%= user.gender %>
+                                              <% } else {%>
+                                                Non-Binary
+                                              <% } %>
+                                            </span>
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                          <td>Sexual preferences:</td>
+                                          <td>
+                                            <span id="gender">
+                                              <% if (user.sex_pref) { %>
+                                                <%= user.sex_pref %>
+                                              <% } else {%>
+                                                Bi
+                                              <% } %>
+                                            </span>
+                                           </td>
+                                        </tr>
+                                        <tr>
+                                          <td>Biography</td>
+                                          <td><span id="biography"><%= user.biography %></span></td>
+                                        </tr>
+                                        <tr>
+                                          <td>Interests</td>
+                                          <td>
+                                            <div id="readonly_tag" class="col-lg-6">
+                                              <input id="interests" type="text" value="" data-role="tagsinput">
+                                            </div>
+                                            <script>
+                                            <% if (user.interests) { %>
+                                              $("input#interests").val("<%= user.interests %>");
+                                            <% } %>
+                                            </script>
+                                          </td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </div>
                               </div>
                             </div>
                             <div class="panel-footer">
@@ -109,8 +132,6 @@
                               </span>
                             </div>
                           </div>
-                        </div>
-                          <% } %>
                         </div>
                       </div>
                     </div>
@@ -161,5 +182,5 @@
 
 </body>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.1/bootstrap-slider.js"></script>
-<script type="text/javascript" src="js/suggestions.js"></script>
+<script type="text/javascript" src="js/user.js"></script>
 </html>

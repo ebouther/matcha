@@ -3,16 +3,18 @@
 
 <head>
     <title>Matcha</title>
+
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCAnF91yIIwEew15cIemeRijX7IonoggKM&libraries=places"></script>
     <script src="http://bootstrap-tagsinput.github.io/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="http://bootstrap-tagsinput.github.io/bootstrap-tagsinput/dist/bootstrap-tagsinput.css">
 
     <link rel="stylesheet" type="text/css" href="css/main.css"/>
-    <script type="text/javascript" src="js/main.js"></script>
 </head>
 
 <body>
@@ -152,6 +154,12 @@
                                         </td>
                                       </tr>
                                       <tr>
+                                        <td>Location</td>
+                                        <td>
+                                          <input id="geoloc" class="controls" type="text" placeholder="Enter a location">
+                                        </td>
+                                      </tr>
+                                      <tr>
                                         <td>Email</td>
                                         <td><a id="email" href="mailto:<%= email %>"><%= email %></a><button id="edit-email" type="button" class=" btn-edit btn btn-default"><span class="glyphicon glyphicon-edit"></span></button></td>
                                       </tr>
@@ -222,12 +230,15 @@
                 </div>
 
                 <div class="well">
-                    <h4>Stuff</h4>
+                    <h4>History</h4>
                     <div class="row">
                         <div class="col-lg-6">
                             <ul class="list-unstyled">
-                                <li><a href="#">Stuff</a>
+                              <% for (var i=0; i < history.length; i++) { %>
+                                <li>
+                                  <%= history[i] %>
                                 </li>
+                              <% } %>
                             </ul>
                         </div>
                     </div>
@@ -251,5 +262,5 @@
     </div>
 
 </body>
-
+  <script type="text/javascript" src="js/main.js"></script>
 </html>
