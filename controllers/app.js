@@ -137,10 +137,23 @@ app.post('/profile', function (req, res) {
         );
         break;
       case "profile_pic":
-        console.log("PROFILE PIC");
         db.collection("users").update(
           {username: req.session.username},
           {$set: {profile_pic: req.body.content}},
+          { upsert : true }
+        );
+        break;
+      case "location":
+        db.collection("users").update(
+          {username: req.session.username},
+          {$set: {location: req.body.content}},
+          { upsert : true }
+        );
+        break;
+      case "lat_lng":
+        db.collection("users").update(
+          {username: req.session.username},
+          {$set: {lat_lng: req.body.content}},
           { upsert : true }
         );
         break;

@@ -2,6 +2,7 @@ var exports = module.exports = {};
 
 var mongodb = require('mongodb');
 var assert = require('assert');
+var request = require('request');
 
 
 exports.loadProfile = function (req, res) {
@@ -13,7 +14,6 @@ exports.loadProfile = function (req, res) {
     });
   });
 }
-
 
 exports.loadSuggestions = function (db, req, res) {
   db.collection("users").findOne({username: req.session.username}, {password: 0, _id: 0}, function(err, doc) {
