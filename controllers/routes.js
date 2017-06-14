@@ -22,9 +22,12 @@ router.get('/user', function (req, res) {
       assert.equal(null, err);
       assert.ok(db != null);
       if (req.query.username) {
-      	db.collection("users").findOneAndUpdate({username: req.query.username}, {$push: {"history": "Viewed by " + req.session.username}}, {upsert: true, projection:{password: 0, _id: 0}}, function(err, doc) {
-      	  if (doc)
-      	    res.render(path.join(__dirname, '/../views/templates/user.ejs'), {user: doc});
+      	db.collection("users").findOneAndUpdate({username: req.query.username}, {$push: {"history": "Viewed by " + req.session.username}}, {upsert: true, projection:{password: 0, _id: 0}}, function(err, user) {
+      	  if (user)
+      	    res.render(path.join(__dirname, '/../views/templates/user.ejs'), {user: user.value});
+          else {
+            res.render(__dirname + '/../views/templates/suggestions.ejs');
+          }
       	});
       }
     });

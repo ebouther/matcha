@@ -93,7 +93,7 @@
 
                                   <img id="profile_pic" alt="profile picture"
                                     src="<%if (users[i].profile_pic) {%>
-                                          <%= users[i].profile_pic %>
+                                          <%= users[i]["picture" + users[i].profile_pic] %>
                                        <% } else { %>
                                           img/profile_default.jpg
                                        <% } %>"
