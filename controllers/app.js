@@ -128,11 +128,12 @@ app.post('/profile', function (req, res) {
       case "age":
         if (isNaN(req.body.content) || req.body.content < 18 || req.body.content > 120)
           res.json({status: 500, message : "Age not valid"});
-        db.collection("users").update(
-          {username: req.session.username},
-          {$set: {age: req.body.content}},
-          { upsert : true }
-        );
+        else
+          db.collection("users").update(
+            {username: req.session.username},
+            {$set: {age: req.body.content}},
+            { upsert : true }
+          );
         break;
       case "picture":
         var obj = {};
@@ -165,6 +166,25 @@ app.post('/profile', function (req, res) {
           {$set: {lat_lng: req.body.content}},
           { upsert : true }
         );
+        break;
+      case "like":
+        db.collection("users").findOne(
+          {username: req.session.username},
+          {like: 1},
+          function(err, user) {
+            if (user.like && user.like.indexOf(req.body.content) !== -1) {
+              db.collection("users").update(
+                {username: req.session.username},
+                {$pull: {like: req.body.content}}
+              );
+            } else {
+              db.collection("users").update(
+                {username: req.session.username},
+                {$push: {like: req.body.content}},
+                { upsert : true }
+              );
+            }
+          });
         break;
     }
   });

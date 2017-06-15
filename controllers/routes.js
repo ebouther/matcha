@@ -65,8 +65,9 @@ router.get('/suggestions', function (req, res) {
     assert.ok(db != null);
     if (req.query.username) {
       db.collection("users").findOne({username: req.query.username}, {password: 0, _id: 0}, function(err, doc) {
-        if (doc)
+        if (doc) {
           res.render(__dirname + '/../views/templates/suggestions.ejs', {users: [doc]});
+        }
         else {
           res.render(__dirname + '/../views/templates/suggestions.ejs');
         }

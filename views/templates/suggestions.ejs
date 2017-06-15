@@ -84,11 +84,11 @@
                               for (var i=0; i < users.length; i++) {
                           %>
                           <div class="col-md-3 col-lg-3 " align="center">
-                          <div class="panel panel-info" onclick="javascript:location.href='user?username=<%= users[i].username %>'">
-                            <div class="panel-heading">
+                          <div class="panel panel-info">
+                            <div class="panel-heading" onclick="javascript:location.href='user?username=<%= users[i].username %>'">
                               <h3 class="panel-title"><%= users[i].firstname + " " + users[i].lastname %></h3>
                             </div>
-                            <div class="panel-body">
+                            <div class="panel-body" onclick="javascript:location.href='user?username=<%= users[i].username %>'">
                               <div class="row">
 
                                   <img id="profile_pic" alt="profile picture"
@@ -103,7 +103,7 @@
                             </div>
                             <div class="panel-footer">
                               <a data-original-title="Chat" data-toggle="tooltip" type="button" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-envelope"></i></a>
-                              <a data-original-title="Like" data-toggle="tooltip" type="button" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-heart"></i></a>
+                              <a id="<%= users[i].username %>" data-original-title="Like" onclick="javascript:like('<%= users[i].username %>')" data-toggle="tooltip" type="button" class="like_b btn btn-sm btn-danger"><i class="glyphicon glyphicon-heart"></i></a>
                               <span class="pull-right">
                                 <a data-original-title="Report" data-toggle="tooltip" type="button" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-remove"></i></a>
                               </span>
