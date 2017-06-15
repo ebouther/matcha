@@ -101,6 +101,14 @@
                                         </td>
                                       </tr>
                                       <tr>
+                                        <td>Age:</td>
+                                        <td><span id="age"><%= age %></span>
+                                          <button id="edit-age" type="button" class=" btn-edit btn btn-default">
+                                            <span class="glyphicon glyphicon-edit"></span>
+                                          </button>
+                                        </td>
+                                      </tr>
+                                      <tr>
                                         <td>Lastname:</td>
                                         <td><span id="lastname"><%= lastname %></span>
                                           <button id="edit-lastname" type="button" class=" btn-edit btn btn-default">
@@ -112,7 +120,6 @@
                                         <td>Gender:</td>
                                         <td>
                                           <select id="gender">
-                                            <option>Non-Binary</option>
                                             <option>Male</option>
                                             <option>Female</option>
                                           </select>
@@ -156,7 +163,7 @@
                                       <tr>
                                         <td>Location</td>
                                         <td>
-                                          <input id="geoloc" class="controls" type="text" placeholder="Enter a location" value="<% if (locals.location) %> <%= location %>" >
+                                          <input id="geoloc" class="controls" type="text" placeholder="Enter a location" value="<% if (locals.location) { %> <%= location %> <% } %>" >
                                         </td>
                                       </tr>
                                       <tr>

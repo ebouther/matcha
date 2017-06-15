@@ -125,6 +125,15 @@ app.post('/profile', function (req, res) {
           { upsert : true }
         );
         break;
+      case "age":
+        if (isNaN(req.body.content) || req.body.content < 18 || req.body.content > 120)
+          res.json({status: 500, message : "Age not valid"});
+        db.collection("users").update(
+          {username: req.session.username},
+          {$set: {age: req.body.content}},
+          { upsert : true }
+        );
+        break;
       case "picture":
         var obj = {};
         var field = 'picture' + req.body.index;

@@ -4,6 +4,7 @@ $(document).ready(function() {
   editProfileField("edit-email", "email");
   editProfileField("edit-biography", "biography");
   editProfileField("edit-interests", "interests");
+  editProfileField("edit-age", "age");
 
   $('select#gender').on('change', function() {
     var selection = this.value;

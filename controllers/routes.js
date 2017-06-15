@@ -51,7 +51,6 @@ router.get('/search', function (req, res) {
   mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
     assert.equal(null, err);
     assert.ok(db != null);
-
   });
 });
 
