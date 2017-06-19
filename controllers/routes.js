@@ -79,6 +79,43 @@ router.get('/suggestions', function (req, res) {
   });
 });
 
+router.get('/contacts', function (req, res) {
+  console.log("GET /contacts");
+  if (!req.session.username)
+  {
+    res.redirect('/');
+    return;
+  }
+  mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
+    assert.equal(null, err);
+    assert.ok(db != null);
+    if (req.session.username) {
+      var contacts = [];
+      db.collection("users").findOne({username: req.session.username}, {password: 0, _id: 0}, function(err, me) {
+        var promises = [];
+        me.like.forEach(function(username) {
+          //promises.push()
+          promises.push(new Promise((resolve, reject) => {
+            db.collection("users").findOne({username: username}, {password: 0, _id: 0}, function(err, user) {
+              if (user && user.like && user.like.indexOf(req.session.username) !== -1) {
+                console.log("CONTACT : " + username);
+                //contacts.push(username);
+                resolve(username);
+              } else {
+                resolve();
+              }
+            });
+          }));
+        });
+        Promise.all(promises).then(contacts => {
+          console.log("CONTACTS : " + JSON.stringify(contacts));
+          res.json(contacts);
+        });
+      });
+    }
+  });
+});
+
 router.get('/chat', function (req, res) {
     res.render(__dirname + '/../views/templates/chat.ejs');
 });
