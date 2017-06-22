@@ -17,9 +17,17 @@ app.use(bodyParser.urlencoded({limit: '5mb'}));
 
 app.set('view engine', 'ejs');
 
-app.use(session({secret: 'ksljflksdfj',
-                resave: false,
-                saveUninitialized: false}));
+
+var sessionMiddleware = session({secret: 'ksljflksdfj',
+                                resave: false,
+                                saveUninitialized: false});
+
+app.use(sessionMiddleware);
+
+io.use(function(socket, next) {
+    sessionMiddleware(socket.request, socket.request.res, next);
+});
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -254,11 +262,17 @@ app.post('/register', function (req, res) {
   })
 });
 
-// io.use(sharedsession(session, {
-//     autoSave:true
-// }));
+
 
 io.on('connection', function(socket) {
+  var users = io.sockets.clients();
+  console.log(JSON.stringify(users));
+  // users.forEach(function (user) {
+  //   if (user.request.session.username !== undefined) {
+  //       console.log(socket.request.session.username + " is connected !");
+  //   }
+  // });
+
   socket.on('chat message', function(msg) {
     console.log("Chat msg");
     io.emit('chat message', msg);
