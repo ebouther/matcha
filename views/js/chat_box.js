@@ -63,19 +63,26 @@ $(document).on('click', '.icon_close', function (e) {
 });
 
 $(document).on('click', '#btn-chat', function (e) {
-    socket.emit('chat message', $('#btn-input').val());
+      $.post('message',
+        {
+            to: "titi",
+            msg: $('#btn-input').val()
+        }
+      );
+    //socket.emit('message', $('#btn-input').val());
     $('#btn-input').val('');
 });
 
-socket.on('chat message', function(msg){
+socket.on('message', function(msg){
+  console.log("RECEIVED MSG");
   var rcv = $('<div class="row msg_container base_receive"> \
                   <div class="col-md-2 col-xs-2 avatar"> \
                       <img src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg" class=" img-responsive "> \
                   </div> \
                   <div class="col-md-10 col-xs-10"> \
                       <div class="messages msg_receive"> \
-                          <p>' + msg + '</p> \
-                          <time datetime="2009-11-13T20:00">Timothy • 51 min</time> \
+                          <p>' + msg.message + '</p> \
+                          <time datetime="2009-11-13T20:00">' + msg.from + ' • 51 min</time> \
                       </div> \
                   </div> \
                 </div>');

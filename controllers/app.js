@@ -262,20 +262,34 @@ app.post('/register', function (req, res) {
   })
 });
 
+app.post('/message', function (req, res) {
+  var to = req.body.to,
+  from = req.session.username,
+  msg = req.body.msg;
+  if (to && from && msg) {
+    Object.keys(io.sockets.sockets).forEach(function(socket_id) {
+        var user = io.sockets.sockets[socket_id];
+        if (user.request.session.username === to) {
+          console.log("SEND MESSAGE TO " + to);
+          var message = {to: to, from: from, message: msg};
+          //checkIfBothLike();
+            io.to(socket_id).emit('message', message);
+          //saveMessageDB(message);
+        }
+    });
+  }
+});
+
+
 
 
 io.on('connection', function(socket) {
-  var users = io.sockets.clients();
-  console.log(JSON.stringify(users));
-  // users.forEach(function (user) {
-  //   if (user.request.session.username !== undefined) {
-  //       console.log(socket.request.session.username + " is connected !");
-  //   }
-  // });
+  console.log("NUMBER OF SOCKETS : " + Object.keys(io.sockets.sockets).length);
 
-  socket.on('chat message', function(msg) {
+
+  socket.on('message', function(msg) {
     console.log("Chat msg");
-    io.emit('chat message', msg);
+    io.emit('message', msg);
   });
 });
 
