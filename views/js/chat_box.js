@@ -1,5 +1,6 @@
 var socket = io();
 var chat_window = undefined;
+var chats = [];
 
 function getContacts(cb) {
   console.log("getContacts()");
@@ -11,17 +12,63 @@ function getContacts(cb) {
        }
     });
  }
+
+function new_chat(username) {
+    console.log("NEW CHAT :" + username);
+     var size = $( ".chat-window" ).last().css("right");
+     if (size === undefined)
+       size = -400;
+     var size_total = parseInt(size) + 400;
+     if (size_total + 400 < $( window ).width())
+     {
+       var new_chat = chat_window.clone().appendTo( ".chat_container" );
+       chats.push({username: username, obj: new_chat});
+
+       new_chat.css("right", size_total);
+       new_chat.find("#chat_title").html(username);
+       new_chat.find("#btn-chat").click(function () {
+         console.log("POST TO :" + username );
+           $.post('message',
+             {
+                 to: username,
+                 msg: new_chat.find("#btn-input").val()
+             }
+           );
+
+           var msg =  $('<div class="row msg_container base_sent"> \
+                             <div class="col-md-10 col-xs-10"> \
+                                 <div class="messages msg_sent"> \
+                                     <p>' + new_chat.find("#btn-input").val() +'</p> \
+                                     <time datetime="2009-11-13T20:00">Me</time> \
+                                 </div> \
+                             </div> \
+                             <div class="col-md-2 col-xs-2 avatar"> \
+                                 <img src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg" class=" img-responsive "> \
+                             </div> \
+                          </div>');
+           new_chat.find('#messages').append(msg);
+           //socket.emit('message', $('#btn-input').val());
+           new_chat.find("#btn-input").val('');
+       });
+     }
+ }
   //$("<li><a href='#' id='new_chat>Toto</a></li>");
 
 $(function () {
   chat_window = $( "#chat_window_1" ).clone();
-  console.log(chat_window);
+
   getContacts(function (contacts) {
-    console.log(contacts);
-    contacts.forEach(function (contact){
+    contacts.forEach(function (contact) {
       console.log("CONTACT : " + contact);
-      if (contact)
-        $("#contacts").append('<li><a href="#" id="new_chat"><span>' + contact + '</span></a></li>');
+      if (contact)  {
+        var $li = $('<li><a href="#" id="new_chat"><span>' + contact + '</span></a></li>');
+        console.log("OBJ : ");
+        console.log($li);
+        $li.click(function() {
+            new_chat(contact);
+        });
+        $("#contacts").append($li);
+      }
     });
   });
 
@@ -47,46 +94,29 @@ $(document).on('focus', '.panel-footer input.chat_input', function (e) {
         $('#minim_chat_window').removeClass('glyphicon-plus').addClass('glyphicon-minus');
     }
 });
-$(document).on('click', '#new_chat', function (e) {
-    var size = $( ".chat-window" ).last().css("right");
-    if (size === undefined)
-      size = -400;
-    var size_total = parseInt(size) + 400;
-    if (size_total + 400 < $( window ).width())
-    {
-      var new_chat = chat_window.clone().appendTo( ".chat_container" );
-      new_chat.css("right", size_total);
-    }
-});
+
 $(document).on('click', '.icon_close', function (e) {
     $(this).parentsUntil(".chat_container").remove();
 });
 
-$(document).on('click', '#btn-chat', function (e) {
-      $.post('message',
-        {
-            to: "titi",
-            msg: $('#btn-input').val()
-        }
-      );
-    //socket.emit('message', $('#btn-input').val());
-    $('#btn-input').val('');
-});
-
 socket.on('message', function(msg){
   console.log("RECEIVED MSG");
-  var rcv = $('<div class="row msg_container base_receive"> \
-                  <div class="col-md-2 col-xs-2 avatar"> \
-                      <img src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg" class=" img-responsive "> \
-                  </div> \
-                  <div class="col-md-10 col-xs-10"> \
-                      <div class="messages msg_receive"> \
-                          <p>' + msg.message + '</p> \
-                          <time datetime="2009-11-13T20:00">' + msg.from + ' • 51 min</time> \
+  chats.forEach(function(chat) {
+    if (chat.username === msg.from) {
+      var rcv = $('<div class="row msg_container base_receive"> \
+                      <div class="col-md-2 col-xs-2 avatar"> \
+                          <img src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg" class=" img-responsive "> \
                       </div> \
-                  </div> \
-                </div>');
-  $('#messages').append(rcv);
+                      <div class="col-md-10 col-xs-10"> \
+                          <div class="messages msg_receive"> \
+                              <p>' + msg.message + '</p> \
+                              <time datetime="2009-11-13T20:00">' + msg.from + ' • 51 min</time> \
+                          </div> \
+                      </div> \
+                    </div>');
+      chat.obj.find('#messages').append(rcv);
+    }
+  });
 });
 
 socket.on('notif', function(msg){

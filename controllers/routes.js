@@ -102,14 +102,14 @@ router.get('/contacts', function (req, res) {
                 //contacts.push(username);
                 resolve(username);
               } else {
-                resolve();
+                resolve(undefined);
               }
             });
           }));
         });
         Promise.all(promises).then(contacts => {
           console.log("CONTACTS : " + JSON.stringify(contacts));
-          res.json(contacts);
+          res.json(contacts.filter(Boolean));
         });
       });
     }
