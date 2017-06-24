@@ -41,6 +41,8 @@ console.log(__dirname + '/../public');
 
 // -------         INCLUDES          -------- //
 
+var users = require("./user");
+
 app.use('/', require("./routes"));
 
 // ------------------------------------------ //
@@ -272,9 +274,12 @@ app.post('/message', function (req, res) {
         if (user.request.session.username === to) {
           console.log("SEND MESSAGE TO " + to);
           var message = {to: to, from: from, message: msg};
-          //checkIfBothLike();
-            io.to(socket_id).emit('message', message);
-          //saveMessageDB(message);
+          users.likeEachOther(from, to, function (like) {
+              if (like === true) {
+                io.to(socket_id).emit('message', message);
+                //saveMessage(message);
+              }
+          });
         }
     });
   }
@@ -285,7 +290,6 @@ app.post('/message', function (req, res) {
 
 io.on('connection', function(socket) {
   console.log("NUMBER OF SOCKETS : " + Object.keys(io.sockets.sockets).length);
-
 
   socket.on('message', function(msg) {
     console.log("Chat msg");

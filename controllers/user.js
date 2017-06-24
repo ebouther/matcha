@@ -5,6 +5,25 @@ var assert = require('assert');
 var request = require('request');
 
 
+exports.likeEachOther = function (username1, username2, cb) {
+  mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
+    assert.equal(null, err);
+    assert.ok(db != null);
+      db.collection("users").findOne({username: username1}, {password: 0, _id: 0}, function(err, user1) {
+        if (user1 && user1.like && user1.like.indexOf(username2) !== -1) {
+            db.collection("users").findOne({username: username2}, {password: 0, _id: 0}, function(err, user2) {
+                if (user2 && user2.like && user2.like.indexOf(username1) !== -1) {
+                  console.log(username1 + " AND " + username2 + " MATCH");
+                  cb(true);
+                } else {
+                  cb(false);
+                }
+            });
+        } else { cb(false); }
+      });
+  });
+}
+
 exports.loadProfile = function (req, res) {
   mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
     assert.equal(null, err);

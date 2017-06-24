@@ -27,35 +27,36 @@ function new_chat(username) {
        new_chat.css("right", size_total);
        new_chat.find("#chat_title").html(username);
        new_chat.find("#btn-chat").click(function () {
-         console.log("POST TO :" + username );
-           $.post('message',
-             {
-                 to: username,
-                 msg: new_chat.find("#btn-input").val()
-             }
-           );
+         if (new_chat.find("#btn-input").val() !== "") {
+             $.post('message',
+               {
+                   to: username,
+                   msg: new_chat.find("#btn-input").val()
+               }
+             );
 
-           var msg =  $('<div class="row msg_container base_sent"> \
-                             <div class="col-md-10 col-xs-10"> \
-                                 <div class="messages msg_sent"> \
-                                     <p>' + new_chat.find("#btn-input").val() +'</p> \
-                                     <time datetime="2009-11-13T20:00">Me</time> \
-                                 </div> \
-                             </div> \
-                             <div class="col-md-2 col-xs-2 avatar"> \
-                                 <img src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg" class=" img-responsive "> \
-                             </div> \
-                          </div>');
-           new_chat.find('#messages').append(msg);
-           //socket.emit('message', $('#btn-input').val());
-           new_chat.find("#btn-input").val('');
-       });
+             var msg =  $('<div class="row msg_container base_sent"> \
+                               <div class="col-md-10 col-xs-10"> \
+                                   <div class="messages msg_sent"> \
+                                       <p>' + new_chat.find("#btn-input").val() +'</p> \
+                                       <time datetime="2009-11-13T20:00">Me</time> \
+                                   </div> \
+                               </div> \
+                               <div class="col-md-2 col-xs-2 avatar"> \
+                                   <img src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg" class=" img-responsive "> \
+                               </div> \
+                            </div>');
+             new_chat.find('#messages').append(msg);
+             new_chat.find("#btn-input").val('');
+          }
+        });
      }
- }
+  }
   //$("<li><a href='#' id='new_chat>Toto</a></li>");
 
 $(function () {
   chat_window = $( "#chat_window_1" ).clone();
+  $( "#chat_window_1" ).remove();
 
   getContacts(function (contacts) {
     contacts.forEach(function (contact) {
