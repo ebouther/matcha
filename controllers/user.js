@@ -4,6 +4,44 @@ var mongodb = require('mongodb');
 var assert = require('assert');
 var request = require('request');
 
+exports.saveMessage = function (message) {
+  mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
+    assert.equal(null, err);
+    assert.ok(db != null);
+
+    var key = message.to;
+    var obj = {};
+    obj[key] = message.msg;
+
+
+    console.log("SAVE MESSAGE IN " + message.to);
+    console.log("SAVE MESSAGE IN " + message.from);
+
+
+    db.collection("users").update({ username: message.from},
+                                  { $addToSet: { chat: {name: message.to} }}
+     );
+
+    db.collection("users").update(
+      { username: message.from, "chat.name": message.to },
+      { $push: {"chat.$.message": message.message} },
+      { upsert : true }
+    );
+
+
+
+    db.collection("users").update({ username: message.to},
+                                  { $addToSet: { chat: {name: message.from} }}
+     );
+
+    db.collection("users").update(
+      { username: message.to, "chat.name": message.from },
+      { $push: {"chat.$.message": message.message} },
+      { upsert : true }
+    );
+
+  });
+}
 
 exports.likeEachOther = function (username1, username2, cb) {
   mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {

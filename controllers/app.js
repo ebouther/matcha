@@ -277,7 +277,7 @@ app.post('/message', function (req, res) {
           users.likeEachOther(from, to, function (like) {
               if (like === true) {
                 io.to(socket_id).emit('message', message);
-                //saveMessage(message);
+                users.saveMessage(message);
               }
           });
         }
