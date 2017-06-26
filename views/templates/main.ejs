@@ -148,7 +148,7 @@
                                       </tr>
                                       <tr>
                                         <td>Biography</td>
-                                        <td><span id="biography"><%= biography %></span><button id="edit-biography" type="button" class=" btn-edit btn btn-default"><span class="glyphicon glyphicon-edit"></span></button></td>
+                                        <td><span id="biography"><% if (locals.biography) { %> <%= biography %> <% } %> </span><button id="edit-biography" type="button" class=" btn-edit btn btn-default"><span class="glyphicon glyphicon-edit"></span></button></td>
                                       </tr>
                                       <tr>
                                         <td>Interests</td>
@@ -242,11 +242,13 @@
                     <div class="row">
                         <div class="col-lg-6">
                             <ul class="list-unstyled">
-                              <% for (var i=0; i < history.length; i++) { %>
-                                <li>
-                                  <%= history[i] %>
-                                </li>
-                              <% } %>
+                              <% if (locals.history) { %>
+                                <% for (var i=0; i < history.length; i++) { %>
+                                  <li>
+                                    <%= history[i] %>
+                                  </li>
+                                <% } %>
+                              <% } %>
                             </ul>
                         </div>
                     </div>

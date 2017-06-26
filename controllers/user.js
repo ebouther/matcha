@@ -4,6 +4,25 @@ var mongodb = require('mongodb');
 var assert = require('assert');
 var request = require('request');
 
+exports.getMessages = function (user1, user2, cb) {
+  mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
+    assert.equal(null, err);
+    assert.ok(db != null);
+
+
+    db.collection("users").findOne({ username: user1 }, function (err, user) {
+      assert.equal(null, err);
+      console.log("USER 2 : ", user2);
+      console.log("CHAT : ", user.chat);
+      var msg = undefined;
+      if (user && user.chat && (msg = user.chat.find(function(chat) { return (chat.name === user2) }))) {
+        cb(msg.message);
+      } else {cb(undefined);}
+    });
+
+  });
+}
+
 exports.saveMessage = function (message) {
   mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
     assert.equal(null, err);
@@ -24,7 +43,7 @@ exports.saveMessage = function (message) {
 
     db.collection("users").update(
       { username: message.from, "chat.name": message.to },
-      { $push: {"chat.$.message": message.message} },
+      { $push: {"chat.$.message": message} },
       { upsert : true }
     );
 
@@ -36,7 +55,7 @@ exports.saveMessage = function (message) {
 
     db.collection("users").update(
       { username: message.to, "chat.name": message.from },
-      { $push: {"chat.$.message": message.message} },
+      { $push: {"chat.$.message": message} },
       { upsert : true }
     );
 
@@ -77,7 +96,7 @@ exports.loadSuggestions = function (db, req, res) {
     if (me) {
       switch (me.sex_pref) {
         case "Hetero":
-          if (doc.gender === "Male") {
+          if (me.gender === "Male") {
             console.log("DBG 1");
               db.collection("users").find({gender: "Female", username: {$ne: req.session.username}}, {password: 0, _id: 0}).toArray(function(err, doc) {
                 res.render(__dirname + '/../views/templates/suggestions.ejs', {users: doc, me: me});
@@ -90,7 +109,7 @@ exports.loadSuggestions = function (db, req, res) {
           }
         break;
         case "Gay":
-          if (doc.gender === "Male") {
+          if (me.gender === "Male") {
             console.log("DBG 3");
             db.collection("users").find({gender: "Male", username: {$ne: req.session.username}}, {password: 0, _id: 0}).toArray(function(err, doc) {
               console.log(doc);

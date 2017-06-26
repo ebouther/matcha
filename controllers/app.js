@@ -269,22 +269,33 @@ app.post('/message', function (req, res) {
   from = req.session.username,
   msg = req.body.msg;
   if (to && from && msg) {
-    Object.keys(io.sockets.sockets).forEach(function(socket_id) {
-        var user = io.sockets.sockets[socket_id];
-        if (user.request.session.username === to) {
-          console.log("SEND MESSAGE TO " + to);
-          var message = {to: to, from: from, message: msg};
-          users.likeEachOther(from, to, function (like) {
-              if (like === true) {
-                io.to(socket_id).emit('message', message);
-                users.saveMessage(message);
-              }
-          });
-        }
+    var message = {to: to, from: from, message: msg};
+    users.likeEachOther(from, to, function (like) {
+      if (like === true) {
+        users.saveMessage(message);
+
+        Object.keys(io.sockets.sockets).forEach(function(socket_id) {
+          var user = io.sockets.sockets[socket_id];
+          if (user.request.session.username === to) {
+            io.to(socket_id).emit('message', message);
+          }
+        });
+      }
     });
   }
 });
 
+app.get('/message', function (req, res) {
+  var user = req.query.user,
+  msg = req.query.msg;
+
+  console.log("GET MESSAGES WITH " + user);
+  users.getMessages(req.session.username, user, function(messages) {
+    console.log("MESSAGES : ", messages);
+    res.json(messages);
+  });
+
+});
 
 
 

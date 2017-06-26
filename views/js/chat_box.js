@@ -2,6 +2,36 @@ var socket = io();
 var chat_window = undefined;
 var chats = [];
 
+function formatMsg(message, username) {
+  var msg;
+  if (message.to === username) {
+    msg =  $('<div class="row msg_container base_sent"> \
+                      <div class="col-md-10 col-xs-10"> \
+                          <div class="messages msg_sent"> \
+                              <p>' + message.message +'</p> \
+                              <time datetime="2009-11-13T20:00">Me</time> \
+                          </div> \
+                      </div> \
+                      <div class="col-md-2 col-xs-2 avatar"> \
+                          <img src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg" class=" img-responsive "> \
+                      </div> \
+                   </div>');
+    } else {
+      msg = $('<div class="row msg_container base_receive"> \
+                      <div class="col-md-2 col-xs-2 avatar"> \
+                          <img src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg" class=" img-responsive "> \
+                      </div> \
+                      <div class="col-md-10 col-xs-10"> \
+                          <div class="messages msg_receive"> \
+                              <p>' + message.message + '</p> \
+                              <time datetime="2009-11-13T20:00">' + message.from + ' • 51 min</time> \
+                          </div> \
+                      </div> \
+                    </div>');
+    }
+    return msg;
+}
+
 function getContacts(cb) {
   console.log("getContacts()");
   $.ajax({
@@ -23,6 +53,17 @@ function new_chat(username) {
      {
        var new_chat = chat_window.clone().appendTo( ".chat_container" );
        chats.push({username: username, obj: new_chat});
+
+       $.ajax({
+            url: '/message',
+            method: 'GET',
+            data: {user: username},
+            success: function(messages) {
+              messages.forEach(function (message) {
+                new_chat.find('#messages').append(formatMsg(message, username));
+              });
+            }
+         });
 
        new_chat.css("right", size_total);
        new_chat.find("#chat_title").html(username);

@@ -91,26 +91,30 @@ router.get('/contacts', function (req, res) {
     assert.ok(db != null);
     if (req.session.username) {
       var contacts = [];
+      console.log("********   USERNAME : ", req.session.username);
       db.collection("users").findOne({username: req.session.username}, {password: 0, _id: 0}, function(err, me) {
+        console.log("********   ME : ", me);
         var promises = [];
-        me.like.forEach(function(username) {
-          //promises.push()
-          promises.push(new Promise((resolve, reject) => {
-            db.collection("users").findOne({username: username}, {password: 0, _id: 0}, function(err, user) {
-              if (user && user.like && user.like.indexOf(req.session.username) !== -1) {
-                console.log("CONTACT : " + username);
-                //contacts.push(username);
-                resolve(username);
-              } else {
-                resolve(undefined);
-              }
+          if (me.like) {
+            me.like.forEach(function(username) {
+              //promises.push()
+              promises.push(new Promise((resolve, reject) => {
+                db.collection("users").findOne({username: username}, {password: 0, _id: 0}, function(err, user) {
+                  if (user && user.like && user.like.indexOf(req.session.username) !== -1) {
+                    console.log("CONTACT : " + username);
+                    //contacts.push(username);
+                    resolve(username);
+                  } else {
+                    resolve(undefined);
+                  }
+                });
+              }));
             });
-          }));
-        });
-        Promise.all(promises).then(contacts => {
-          console.log("CONTACTS : " + JSON.stringify(contacts));
-          res.json(contacts.filter(Boolean));
-        });
+          }
+          Promise.all(promises).then(contacts => {
+            console.log("CONTACTS : " + JSON.stringify(contacts));
+            res.json(contacts.filter(Boolean));
+          });
       });
     }
   });
