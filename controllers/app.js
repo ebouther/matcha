@@ -73,9 +73,13 @@ app.post('/login', function (req, res) {
              return;
          } else {
           req.session.username = req.body.username;
-          res.redirect('/');
-          return;
-         }
+          if (!doc.location) {
+            console.log("NO LOCATION SAVED")
+            users.saveIpLocation(db, req, res);
+          } else {
+            res.redirect('/');
+          }
+        }
       });
     });
   });

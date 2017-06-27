@@ -2,25 +2,29 @@ console.log(me);
 console.log(users);
 
 var loc_input = new google.maps.places.Autocomplete(document.getElementById('geoloc'));
+//http://maps.googleapis.com/maps/api/geocode/json?latlng=48.8537,2.549&sensor=true
+//http://ip-api.com/json/62.210.34.252
 
 $("#search").click(function () {
+	var place = loc_input.getPlace();
 	var search = {
 		age_min: $("#age_min").val(),
 		age_max: $("#age_max").val(),
 		pop_min: $("#pop_min").val(),
 		pop_max: $("#pop_max").val(),
-		location: loc_input.val(),
+		location: place ? place.place_id : "",
 		interests: $("#interests").val()
 	}
 
-	var url = '/suggestions?' +
-						'age_min=' + encodeURIComponent(search.age_min) + '&' +
-						'age_max=' + encodeURIComponent(search.age_max) + '&' +
-						'dist_max=' + encodeURIComponent(search.dist_max) + '&' +
-						'pop_min=' + encodeURIComponent(search.age_min) + '&' +
-						'pop_max=' + encodeURIComponent(search.pop_max) + '&' +
-						'interests=' + encodeURIComponent(search.interests);
+	console.log("LOC ID : ", search.location);
 
+	var url = '/suggestions?' +
+						'age_min='   + encodeURIComponent(search.age_min)  + '&' +
+						'age_max='   + encodeURIComponent(search.age_max)  + '&' +
+						'pop_min='   + encodeURIComponent(search.age_min)  + '&' +
+						'pop_max='   + encodeURIComponent(search.pop_max)  + '&' +
+						'location='  + encodeURIComponent(search.location) + '&' +
+						'interests=' + encodeURIComponent(search.interests);
 
 	window.location.href = url;
 });

@@ -4,6 +4,32 @@ var mongodb = require('mongodb');
 var assert = require('assert');
 var request = require('request');
 
+exports.saveIpLocation = function (db, req, res) {
+  var ip = req.ip;
+
+  console.log("IP : ", ip);
+
+  var options = {
+      hostname: 'http://ip-api.com/',
+      path: '/json/' + req.connection.remoteAddress,
+      method: 'GET',
+      json:true
+  }
+  request(options, function(error, response, body){
+    console.log("RES : ", body);
+  });
+
+  // var ip_loc = ;
+
+  // db.collection("users").update(
+  //   { username: req.session.username },
+  //   { $set: {ip_loc: ip_loc} },
+  //   { upsert : true }
+  // );
+
+  res.redirect('/');
+}
+
 exports.getMessages = function (user1, user2, cb) {
   mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
     assert.equal(null, err);

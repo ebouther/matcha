@@ -132,16 +132,14 @@ var loc_input = new google.maps.places.Autocomplete(document.getElementById('geo
 // }
 loc_input.addListener('place_changed', function() {
   var place = loc_input.getPlace();
-  navigator.geolocation.getCurrentPosition(function(pos) {
-    console.log("LOCATE IP : " + JSON.stringify(pos));
-  });
+
   if (place.geometry) {
     var lat = place.geometry.location.lat()
     var lng = place.geometry.location.lng()
     $.post('profile',
       {
         field: "location",
-        content: place.address_components[0].long_name
+        content: place.place_id//place.address_components[0].long_name
       }
     );
     $.post('profile',
