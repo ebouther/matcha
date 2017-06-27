@@ -91,20 +91,58 @@ exports.loadProfile = function (req, res) {
   });
 }
 
+function filterSuggestions (data, req, res) {
+
+  console.log("QUERIES : ", req.query);
+  data.users.forEach(function (user, i) {
+      if (user.age
+          && req.query.age_min && req.query.age_min !== ""
+          && user.age < req.query.age_min)
+      {
+        console.log("TOO YOUNG - REMOVE USER : ", i);
+        data.users.splice(i, 1);
+      }
+      if (user.age
+          && req.query.age_max && !isNaN(req.query.age_max)
+          && user.age > parseInt(req.query.age_max))
+      {
+        console.log("TOO OLD - REMOVE USER : ", i);
+        data.users.splice(i, 1);
+      }
+
+      if (user.pop
+          && req.query.pop_min && req.query.pop_min !== ""
+          && user.pop < req.query.pop_min)
+      {
+        console.log("NOT ENOUGH POP - REMOVE USER : ", i);
+        data.users.splice(i, 1);
+      }
+      if (user.pop
+          && req.query.pop_max && req.query.pop_max !== ""
+          && user.pop > req.query.pop_max)
+      {
+        console.log("TOO POP - REMOVE USER : ", i);
+        data.users.splice(i, 1);
+      }
+  });
+  res.render(__dirname + '/../views/templates/suggestions.ejs', data);
+}
+
 exports.loadSuggestions = function (db, req, res) {
   db.collection("users").findOne({username: req.session.username}, {password: 0, _id: 0}, function(err, me) {
-    if (me) {
       switch (me.sex_pref) {
         case "Hetero":
           if (me.gender === "Male") {
             console.log("DBG 1");
               db.collection("users").find({gender: "Female", username: {$ne: req.session.username}}, {password: 0, _id: 0}).toArray(function(err, doc) {
-                res.render(__dirname + '/../views/templates/suggestions.ejs', {users: doc, me: me});
+                filterSuggestions({users: doc, me: me});
+                //res.render(__dirname + '/../views/templates/suggestions.ejs', {users: doc, me: me});
               });
           } else {
             console.log("DBG 2");
             db.collection("users").find({gender: "Male", username: {$ne: req.session.username}}, {password: 0, _id: 0}).toArray(function(err, doc) {
-              res.render(__dirname + '/../views/templates/suggestions.ejs', {users: doc, me: me});
+              filterSuggestions({users: doc, me: me});
+              //res.render(__dirname + '/../views/templates/suggestions.ejs', {users: doc, me: me});
             });
           }
         break;
@@ -112,23 +150,25 @@ exports.loadSuggestions = function (db, req, res) {
           if (me.gender === "Male") {
             console.log("DBG 3");
             db.collection("users").find({gender: "Male", username: {$ne: req.session.username}}, {password: 0, _id: 0}).toArray(function(err, doc) {
-              console.log(doc);
-              res.render(__dirname + '/../views/templates/suggestions.ejs', {users: doc, me: me});
+              filterSuggestions({users: doc, me: me});
+              //res.render(__dirname + '/../views/templates/suggestions.ejs', {users: doc, me: me});
             });
           } else {
             console.log("DBG 4");
             db.collection("users").find({gender: "Female", username: {$ne: req.session.username}}, {password: 0, _id: 0}).toArray(function(err, doc) {
-              res.render(__dirname + '/../views/templates/suggestions.ejs', {users: doc, me: me});
+              filterSuggestions({users: doc, me: me});
+              //res.render(__dirname + '/../views/templates/suggestions.ejs', {users: doc, me: me});
             });
           }
         break;
         default:
           console.log("DBG 5");
           db.collection("users").find({username: {$ne: req.session.username}}, {password: 0, _id: 0}).toArray(function(err, doc) {
-            res.render(__dirname + '/../views/templates/suggestions.ejs', {users: doc, me: me});
+            filterSuggestions({users: doc, me: me}, req, res);
+            //res.render(__dirname + '/../views/templates/suggestions.ejs', {users: doc, me: me});
           });
       }
-    }
+
   });
 
 }
