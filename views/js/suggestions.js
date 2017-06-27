@@ -1,13 +1,16 @@
 console.log(me);
 console.log(users);
 
+var loc_input = new google.maps.places.Autocomplete(document.getElementById('geoloc'));
+
 $("#search").click(function () {
 	var search = {
 		age_min: $("#age_min").val(),
 		age_max: $("#age_max").val(),
 		pop_min: $("#pop_min").val(),
 		pop_max: $("#pop_max").val(),
-		dist_max: $("#dist_max").val()
+		location: loc_input.val(),
+		interests: $("#interests").val()
 	}
 
 	var url = '/suggestions?' +
@@ -15,8 +18,10 @@ $("#search").click(function () {
 						'age_max=' + encodeURIComponent(search.age_max) + '&' +
 						'dist_max=' + encodeURIComponent(search.dist_max) + '&' +
 						'pop_min=' + encodeURIComponent(search.age_min) + '&' +
-						'pop_max=' + encodeURIComponent(search.pop_max);
-	console.log("URL ", url);
+						'pop_max=' + encodeURIComponent(search.pop_max) + '&' +
+						'interests=' + encodeURIComponent(search.interests);
+
+
 	window.location.href = url;
 });
 
