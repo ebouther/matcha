@@ -125,6 +125,7 @@ exports.loadProfile = function (req, res) {
 }
 
 function filterSuggestions (data, req, res) {
+  var interests = req.query.interests ? req.query.interests.split(",") : [];
 
   console.log("QUERIES : ", req.query);
   data.users.forEach(function (user, i) {
@@ -139,7 +140,7 @@ function filterSuggestions (data, req, res) {
           && req.query.age_max && !isNaN(req.query.age_max)
           && user.age > parseInt(req.query.age_max))
       {
-        console.log("TOO OLD - REMOVE USER : ", i);
+        console.log("TOO OLD - REMOVE USER : ", user.username);
         data.users.splice(i, 1);
       }
 
@@ -147,16 +148,31 @@ function filterSuggestions (data, req, res) {
           && req.query.pop_min && req.query.pop_min !== ""
           && user.pop < req.query.pop_min)
       {
-        console.log("NOT ENOUGH POP - REMOVE USER : ", i);
+        console.log("NOT ENOUGH POP - REMOVE USER : ", user.username);
         data.users.splice(i, 1);
       }
+
       if (user.pop
           && req.query.pop_max && req.query.pop_max !== ""
           && user.pop > req.query.pop_max)
       {
-        console.log("TOO POP - REMOVE USER : ", i);
+        console.log("TOO POP - REMOVE USER : ", user.username);
         data.users.splice(i, 1);
       }
+
+      if (user.interests) {
+        var user_interests = user.interests.split(",");
+        interests.forEach(function (interest) {
+          if (user_interests.indexOf(interest) === -1)
+          {
+            console.log("MISSING INTEREST :", interest, "- REMOVE USER : ", user.username);
+            data.users.splice(i, 1);
+          }
+        });
+      } else if (interests.length > 0) {
+        data.users.splice(i, 1);
+      }
+
   });
   res.render(__dirname + '/../views/templates/suggestions.ejs', data);
 }

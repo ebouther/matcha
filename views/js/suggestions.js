@@ -16,7 +16,7 @@ $("#search").click(function () {
 		interests: $("#interests").val()
 	}
 
-	console.log("LOC ID : ", search.location);
+	console.log("SEARCH ", search);
 
 	var url = '/suggestions?' +
 						'age_min='   + encodeURIComponent(search.age_min)  + '&' +
@@ -84,7 +84,7 @@ $('input#search_by_tag').on('itemAdded', function(event) {
 function reloadButtons() {
 	$(".chat_b").each(function(){
 		var username = $(this).attr('id');
-		if (me.like.indexOf(username) !== -1) {
+		if (me && me.like && me.like.indexOf(username) !== -1) {
 			if ((user = (users.find( function(user){return user.username === username} )))
 					&& user.like.indexOf(me.username) !== -1)
 				return;
