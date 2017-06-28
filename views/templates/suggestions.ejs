@@ -109,7 +109,9 @@
                             </div>
                             <div class="panel-footer">
                               <a id="<%= users[i].username %>" onclick="javascript:location.href='chat?username=<%= users[i].username %>'" data-original-title="Chat" data-toggle="tooltip" type="button" class="chat_b btn btn-sm btn-primary"><i class="glyphicon glyphicon-envelope"></i></a>
-                              <a id="<%= users[i].username %>" data-original-title="Like" onclick="javascript:like('<%= users[i].username %>')" data-toggle="tooltip" type="button" class="like_b btn btn-sm btn-danger"><i class="glyphicon glyphicon-heart"></i></a>
+                              <% if (locals.me && me.profile_pic && me.profile_pic !== "") { %>
+                                <a id="<%= users[i].username %>" data-original-title="Like" onclick="javascript:like('<%= users[i].username %>')" data-toggle="tooltip" type="button" class="like_b btn btn-sm btn-danger"><i class="glyphicon glyphicon-heart"></i></a>
+                              <% } %>
                               <span class="pull-right">
                                 <a data-original-title="Report" data-toggle="tooltip" type="button" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-remove"></i></a>
                               </span>

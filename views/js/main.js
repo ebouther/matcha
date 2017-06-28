@@ -55,7 +55,7 @@ $(document).ready(function() {
 
             reader.onload = function (e) {
                 $(img_id).attr('src', e.target.result).fadeIn('slow');
-                console.log("SIZE:" + input.files[0].size);
+                // console.log("SIZE:" + input.files[0].size);
                 if (input.files[0].size < 2000000) {
                   $.post('profile',
                     {
@@ -80,7 +80,7 @@ $(document).ready(function() {
         });
         var pic = $("#profile-pic" + i);
         pic.click(function(){
-          console.log("'" + pic.attr('src') + "'");
+          //console.log("'" + pic.attr('src') + "'");
           if (pic.attr('src') != "") {
             $("#profile-pic").attr("src", pic.prop('src'));
             $.post('profile',

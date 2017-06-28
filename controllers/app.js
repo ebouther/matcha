@@ -184,9 +184,13 @@ app.post('/profile', function (req, res) {
       case "like":
         db.collection("users").findOne(
           {username: req.session.username},
-          {like: 1},
+          {like: 1, profile_pic: 1},
           function(err, user) {
-            if (user.like && user.like.indexOf(req.body.content) !== -1) {
+            if (user.profile_pic
+                && user.profile_pic !== ""
+                && user.like
+                && user.like.indexOf(req.body.content) !== -1)
+            {
               db.collection("users").update(
                 {username: req.session.username},
                 {$pull: {like: req.body.content}}

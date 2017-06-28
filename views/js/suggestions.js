@@ -93,6 +93,11 @@ function reloadButtons() {
 	});
 
 	$(".like_b").each(function(){
+		if (!me.profile_pic || me.profile_pic === "") {
+			console.log("disable button");
+			$(this).disable();
+		}
+
 		if (me.like.indexOf($(this).attr('id')) !== -1) {
 			$(this).css("background-color", "white");
 			$(this).children().css("color", "red");
