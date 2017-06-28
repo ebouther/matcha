@@ -134,8 +134,8 @@ loc_input.addListener('place_changed', function() {
   var place = loc_input.getPlace();
 
   if (place.geometry) {
-    var lat = place.geometry.location.lat()
-    var lng = place.geometry.location.lng()
+    var lat = place.geometry.location.lat();
+    var lng = place.geometry.location.lng();
     $.post('profile',
       {
         field: "location",

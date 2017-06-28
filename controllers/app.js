@@ -52,7 +52,7 @@ app.post('/login', function (req, res) {
   mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
     assert.equal(null, err);
     assert.ok(db != null);
-    db.collection("users").findOne({username: req.body.username}, {password: 1, _id: 0}, function(err, doc) {
+    db.collection("users").findOne({username: req.body.username}, {location:1, password: 1, _id: 0}, function(err, doc) {
       if (err)
           throw new Error('Something went wrong!');
       if (!doc) {
@@ -73,8 +73,8 @@ app.post('/login', function (req, res) {
              return;
          } else {
           req.session.username = req.body.username;
-          if (!doc.location) {
-            console.log("NO LOCATION SAVED")
+          if (!doc.location || doc.location === "") {
+            console.log("NO LOCATION SAVED : ", doc);
             users.saveIpLocation(db, req, res);
           } else {
             res.redirect('/');

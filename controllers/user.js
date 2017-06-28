@@ -10,24 +10,31 @@ exports.saveIpLocation = function (db, req, res) {
   console.log("IP : ", ip);
 
   var options = {
-      hostname: 'http://ip-api.com/',
-      path: '/json/' + req.connection.remoteAddress,
+      uri: 'http://ip-api.com' + '/json/' + ((ip === "::1" || ip === "127.0.0.1") ? '62.210.34.252' : ip),
       method: 'GET',
       json:true
   }
-  request(options, function(error, response, body){
-    console.log("RES : ", body);
+  request(options, function(err, result, body) {
+    if (!err) {
+      request('https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyDc3Tx5tuzRnZ8KGgKRIdvHyi-6oTyZPCE&latlng=' + body.lat + ',' + body.lon, function (err, result, place) {
+        place = JSON.parse(place);
+
+        if (!err && place.results
+          && place.results.length > 0
+          && place.results[0].place_id)
+        {
+          var ip_loc = place.results[0].place_id;
+
+          db.collection("users").update(
+            { username: req.session.username },
+            { $set: {ip_loc: ip_loc} },
+            { upsert : true }
+          );
+        }
+        res.redirect('/');
+      });
+    } else { res.redirect('/'); }
   });
-
-  // var ip_loc = ;
-
-  // db.collection("users").update(
-  //   { username: req.session.username },
-  //   { $set: {ip_loc: ip_loc} },
-  //   { upsert : true }
-  // );
-
-  res.redirect('/');
 }
 
 exports.getMessages = function (user1, user2, cb) {
