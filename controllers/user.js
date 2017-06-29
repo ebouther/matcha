@@ -129,32 +129,28 @@ function filterSuggestions (data, req, res) {
 
   console.log("QUERIES : ", req.query);
   data.users.forEach(function (user, i) {
-      if (user.age
-          && req.query.age_min && req.query.age_min !== ""
-          && user.age < req.query.age_min)
+      if (req.query.age_min && req.query.age_min !== ""
+          && (!user.age || user.age < req.query.age_min))
       {
         console.log("TOO YOUNG - REMOVE USER : ", i);
         data.users.splice(i, 1);
       }
-      if (user.age
-          && req.query.age_max && !isNaN(req.query.age_max)
-          && user.age > parseInt(req.query.age_max))
+      if (req.query.age_max && !isNaN(req.query.age_max)
+          && (!user.age || user.age > parseInt(req.query.age_max)))
       {
         console.log("TOO OLD - REMOVE USER : ", user.username);
         data.users.splice(i, 1);
       }
 
-      if (user.pop
-          && req.query.pop_min && req.query.pop_min !== ""
-          && user.pop < req.query.pop_min)
+      if (req.query.pop_min && req.query.pop_min !== ""
+          && (!user.pop || user.pop < req.query.pop_min))
       {
         console.log("NOT ENOUGH POP - REMOVE USER : ", user.username);
         data.users.splice(i, 1);
       }
 
-      if (user.pop
-          && req.query.pop_max && req.query.pop_max !== ""
-          && user.pop > req.query.pop_max)
+      if (req.query.pop_max && req.query.pop_max !== ""
+          && (!user.pop || user.pop > req.query.pop_max))
       {
         console.log("TOO POP - REMOVE USER : ", user.username);
         data.users.splice(i, 1);
@@ -170,6 +166,14 @@ function filterSuggestions (data, req, res) {
           }
         });
       } else if (interests.length > 0) {
+        console.log("MISSING INTEREST - REMOVE USER : ", user.username);
+        data.users.splice(i, 1);
+      }
+
+      if (req.query.location
+        && req.query.location !== user.location)
+      {
+        console.log("MISSING LOCATION - REMOVE USER : ", user.username);
         data.users.splice(i, 1);
       }
 
