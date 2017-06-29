@@ -4,6 +4,8 @@ var mongodb = require('mongodb');
 var assert = require('assert');
 var request = require('request');
 
+var io = require('./app').io;
+
 exports.saveIpLocation = function (db, req, res) {
   var ip = req.ip;
 
@@ -95,6 +97,12 @@ exports.saveMessage = function (message) {
   });
 }
 
+exports.isOnline = function (username) {
+  return Object.keys(io.sockets.sockets).some(function(socket_id) {
+    return (io.sockets.sockets[socket_id].request.session.username === username);
+  });
+}
+
 exports.likeEachOther = function (username1, username2, cb) {
   mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
     assert.equal(null, err);
@@ -137,7 +145,6 @@ function sortSuggestions (data, req, res) {
           return -1;
         else if (!b.age)
           return 1;
-          console.log("RETURN", a.age - b.age);
         return (a.age - b.age);
       });
       break;

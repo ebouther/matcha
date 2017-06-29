@@ -54,8 +54,21 @@
                   <div class="row">
                         <div class="col-lg-8" >
                           <div class="panel panel-info" onclick="javascript:location.href='user?username=<%= user.username %>'">
-                            <div class="panel-heading">
-                              <h3 class="panel-title"><%= user.firstname + " " + user.lastname %></h3>
+                            <div class="panel-heading clearfix">
+                          			<div class="container-fluid panel-container">
+                          				<div class="col-xs-3 text-left">
+                                    <h4 class="panel-title">
+                          						<i class="glyphicon glyphicon-user"></i>
+                          						<%= user.firstname + " " + user.lastname %>
+                          					</h4>
+                          				</div>
+                          				<div class="col-xs-6 text-center "></div>
+                          				<div class="col-xs-3 text-right">
+                          					<span class="panel-title">
+                          						<span  style="color: <%= locals.user.online ? 'red' : 'green'%>" class="glyphicon glyphicon-one-fine-dot"></span>
+                          					</span>
+                                  </div>
+                                </div>
                             </div>
                             <div class="panel-body">
                               <div class="row">

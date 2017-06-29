@@ -16,3 +16,12 @@ body {
 .input-group {
     display: block;
 }
+
+.glyphicon.glyphicon-one-fine-dot {
+    margin-bottom: -.8em;
+    overflow: hidden;
+}
+.glyphicon.glyphicon-one-fine-dot:before {
+    content:"\25cf";
+    font-size: 3em;
+}

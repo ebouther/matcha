@@ -2,7 +2,7 @@ console.log(me);
 console.log(users);
 
 var loc_input = new google.maps.places.Autocomplete(document.getElementById('geoloc'));
-//http://maps.googleapis.com/maps/api/geocode/json?latlng=48.8537,2.549&sensor=true
+//http://maps.googleapis.com/maps/api/geocode/json?latlng=48.8537,2.549
 //http://ip-api.com/json/62.210.34.252
 
 $("#search").click(function () {
