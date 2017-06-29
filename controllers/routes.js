@@ -73,7 +73,6 @@ router.get('/suggestions', function (req, res) {
         }
       });
     } else {
-      //var greetings = require("./greetings.js"); // What the heck is dat ?? O.o
       user.loadSuggestions(db, req, res);
     }
   });
@@ -117,6 +116,12 @@ router.get('/contacts', function (req, res) {
           });
       });
     }
+  });
+});
+
+router.get('/disconnect', function (req, res) {
+  req.session.destroy(function (err) {
+    res.redirect('/');
   });
 });
 

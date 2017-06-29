@@ -124,6 +124,64 @@ exports.loadProfile = function (req, res) {
   });
 }
 
+function sortSuggestions (data, req, res) {
+  console.log("SORT : ", req.query.sort);
+  switch (req.query.sort) {
+
+    case "age":
+      console.log("SORT BY AGE");
+      data.users.sort(function (a, b) {
+        if (!a.age && !b.age)
+          return 0;
+        else if (!a.age)
+          return -1;
+        else if (!b.age)
+          return 1;
+          console.log("RETURN", a.age - b.age);
+        return (a.age - b.age);
+      });
+      break;
+
+    case "pop":
+      console.log("SORT BY POP");
+      data.users.sort(function (a, b) {
+        if (!a.popularity && !b.popularity)
+          return 0;
+        else if (!a.popularity)
+          return -1;
+        else if (!b.popularity)
+          return 1;
+        return (a.popularity - b.popularity);
+      });
+      break;
+
+    case "tag":
+      console.log("SORT BY TAG");
+      console.log("ME : ", data.me);
+      var my_tags = data.me.interests ? data.me.interests.split(",") : [];
+      console.log("BEFORE : ", data.users);
+      data.users.sort(function (a, b) {
+        var a_interests = a.interests ? a.interests.split(",") : [];
+        var b_interests = b.interests ? b.interests.split(",") : [];
+        var a_common_int = 0;
+        var b_common_int = 0;
+
+        my_tags.forEach(function (interest) {
+          if (a_interests.indexOf(interest) !== -1)
+            a_common_int++;
+          if (b_interests.indexOf(interest) !== -1)
+            b_common_int++;
+        });
+
+        console.log("COMMON ", a_common_int,  b_common_int);
+        return (b_common_int - a_common_int);
+      });
+      console.log("AFTER : ", data.users);
+      break;
+  }
+  res.render(__dirname + '/../views/templates/suggestions.ejs', data);
+}
+
 function filterSuggestions (data, req, res) {
   var interests = req.query.interests ? req.query.interests.split(",") : [];
 
@@ -157,7 +215,7 @@ function filterSuggestions (data, req, res) {
       }
 
       if (user.interests) {
-        var user_interests = user.interests.split(",");
+        var user_interests = user.interests ? user.interests.split(",") : [];
         interests.forEach(function (interest) {
           if (user_interests.indexOf(interest) === -1)
           {
@@ -178,7 +236,7 @@ function filterSuggestions (data, req, res) {
       }
 
   });
-  res.render(__dirname + '/../views/templates/suggestions.ejs', data);
+  sortSuggestions(data, req, res);
 }
 
 exports.loadSuggestions = function (db, req, res) {

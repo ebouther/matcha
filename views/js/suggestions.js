@@ -13,7 +13,8 @@ $("#search").click(function () {
 		pop_min: $("#pop_min").val(),
 		pop_max: $("#pop_max").val(),
 		location: place ? place.place_id : "",
-		interests: $("#interests").val()
+		interests: $("#interests").val(),
+		sort: $("select#sort option:checked").val()
 	}
 
 	console.log("SEARCH ", search);
@@ -24,7 +25,8 @@ $("#search").click(function () {
 						'pop_min='   + encodeURIComponent(search.age_min)  + '&' +
 						'pop_max='   + encodeURIComponent(search.pop_max)  + '&' +
 						'location='  + encodeURIComponent(search.location) + '&' +
-						'interests=' + encodeURIComponent(search.interests);
+						'interests=' + encodeURIComponent(search.interests) + '&' +
+						'sort='  + encodeURIComponent(search.sort);
 
 	window.location.href = url;
 });
