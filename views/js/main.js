@@ -125,11 +125,7 @@ function editProfileField(button_id, value_id) {
 }
 
 var loc_input = new google.maps.places.Autocomplete(document.getElementById('geoloc'));
-// exports.getDistance = function(lat, lng, lat2, lng2) {
-//   return google.maps.geometry.spherical.computeDistanceBetween(
-//     new google.maps.LatLng(lat, lng),
-//     new google.maps.LatLng(lat1, lng1));
-// }
+
 loc_input.addListener('place_changed', function() {
   var place = loc_input.getPlace();
 
@@ -139,7 +135,7 @@ loc_input.addListener('place_changed', function() {
     $.post('profile',
       {
         field: "location",
-        content: place.place_id//place.address_components[0].long_name
+        content: place.address_components[0].long_name //place.place_id//
       }
     );
     $.post('profile',

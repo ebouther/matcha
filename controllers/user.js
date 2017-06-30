@@ -6,6 +6,13 @@ var request = require('request');
 
 var io = require('./app').io;
 
+exports.getDistance = function(lat, lng, lat2, lng2)
+{
+  return google.maps.geometry.spherical.computeDistanceBetween(
+    new google.maps.LatLng(lat, lng),
+    new google.maps.LatLng(lat1, lng1));
+}
+
 exports.saveIpLocation = function (db, req, res) {
   var ip = req.ip;
 
@@ -18,24 +25,30 @@ exports.saveIpLocation = function (db, req, res) {
   }
   request(options, function(err, result, body) {
     if (!err) {
-      request('https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyDc3Tx5tuzRnZ8KGgKRIdvHyi-6oTyZPCE&latlng=' + body.lat + ',' + body.lon, function (err, result, place) {
-        place = JSON.parse(place);
-
-        if (!err && place.results
-          && place.results.length > 0
-          && place.results[0].place_id)
-        {
-          var ip_loc = place.results[0].place_id;
-
-          db.collection("users").update(
-            { username: req.session.username },
-            { $set: {ip_loc: ip_loc} },
-            { upsert : true }
-          );
-        }
-        res.redirect('/');
-      });
-    } else { res.redirect('/'); }
+      // request('https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyDc3Tx5tuzRnZ8KGgKRIdvHyi-6oTyZPCE&latlng=' + body.lat + ',' + body.lon, function (err, result, place) {
+      //   place = JSON.parse(place);
+      //
+      //   if (!err && place.results
+      //     && place.results.length > 0
+      //     && place.results[0].place_id)
+      //   {
+      //     var ip_loc = place.results[0].place_id;
+      //
+      //     db.collection("users").update(
+      //       { username: req.session.username },
+      //       { $set: {ip_loc: ip_loc} },
+      //       { upsert : true }
+      //     );
+      //   }
+      //   res.redirect('/');
+      // });
+      db.collection("users").update(
+        { username: req.session.username },
+        { $set: {ip_lat_lng: [body.lat, body.lng]} },
+        { upsert : true }
+      );
+    }
+    res.redirect('/');
   });
 }
 
@@ -235,8 +248,9 @@ function filterSuggestions (data, req, res) {
         data.users.splice(i, 1);
       }
 
-      if (req.query.location
-        && req.query.location !== user.location)
+      if (req.query.lat && req.query.lng
+          && req.query.lat !== "" && req.query.lng !== ""
+          && (!user.lat_lng || req.query.lat !== user.lat_lng[0] || req.query.lng !== user.lat_lng[1]))
       {
         console.log("MISSING LOCATION - REMOVE USER : ", user.username);
         data.users.splice(i, 1);

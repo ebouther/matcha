@@ -12,7 +12,8 @@ $("#search").click(function () {
 		age_max: $("#age_max").val(),
 		pop_min: $("#pop_min").val(),
 		pop_max: $("#pop_max").val(),
-		location: place ? place.place_id : "",
+		lat: place ? place.geometry.location.lat() : "",
+		lng: place ? place.geometry.location.lng() : "",
 		interests: $("#interests").val(),
 		sort: $("select#sort option:checked").val()
 	}
@@ -20,13 +21,14 @@ $("#search").click(function () {
 	console.log("SEARCH ", search);
 
 	var url = '/suggestions?' +
-						'age_min='   + encodeURIComponent(search.age_min)  + '&' +
-						'age_max='   + encodeURIComponent(search.age_max)  + '&' +
-						'pop_min='   + encodeURIComponent(search.age_min)  + '&' +
-						'pop_max='   + encodeURIComponent(search.pop_max)  + '&' +
-						'location='  + encodeURIComponent(search.location) + '&' +
+						'age_min='   + encodeURIComponent(search.age_min)   + '&' +
+						'age_max='   + encodeURIComponent(search.age_max)   + '&' +
+						'pop_min='   + encodeURIComponent(search.age_min)   + '&' +
+						'pop_max='   + encodeURIComponent(search.pop_max)   + '&' +
+						'lat='       + encodeURIComponent(search.lat)       + '&' +
+						'lng='       + encodeURIComponent(search.lng)       + '&' +
 						'interests=' + encodeURIComponent(search.interests) + '&' +
-						'sort='  + encodeURIComponent(search.sort);
+						'sort='      + encodeURIComponent(search.sort);
 
 	window.location.href = url;
 });
@@ -88,7 +90,7 @@ function reloadButtons() {
 		var username = $(this).attr('id');
 		if (me && me.like && me.like.indexOf(username) !== -1) {
 			if ((user = (users.find( function(user){return user.username === username} )))
-					&& user.like.indexOf(me.username) !== -1)
+					&& user.like && user.like.indexOf(me.username) !== -1)
 				return;
 		}
 		$(this).css("display", "none");

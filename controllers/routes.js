@@ -23,7 +23,8 @@ router.get('/user', function (req, res) {
       assert.ok(db != null);
       if (req.query.username) {
       	db.collection("users").findOneAndUpdate({username: req.query.username}, {$push: {"history": "Viewed by " + req.session.username}}, {upsert: true, projection:{password: 0, _id: 0}}, function(err, usr) {
-      	  if (usr) {
+      	  if (usr && usr.value && usr.value.username) {
+            console.log("ISONLINE : ", user.isOnline(usr.value.username));
             usr.value.online = user.isOnline(usr.value.username);
             res.render(path.join(__dirname, '/../views/templates/user.ejs'), {user: usr.value});
           } else {
