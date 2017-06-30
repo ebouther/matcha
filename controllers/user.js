@@ -6,11 +6,21 @@ var request = require('request');
 
 var io = require('./app').io;
 
-exports.getDistance = function(lat, lng, lat2, lng2)
-{
-  return google.maps.geometry.spherical.computeDistanceBetween(
-    new google.maps.LatLng(lat, lng),
-    new google.maps.LatLng(lat1, lng1));
+function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+  var R = 6371;
+  var dLat = deg2rad(lat2-lat1);
+  var dLon = deg2rad(lon2-lon1);
+  var a =
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  var d = R * c;
+  return d;
+}
+
+function deg2rad(deg) {
+  return deg * (Math.PI/180)
 }
 
 exports.saveIpLocation = function (db, req, res) {
@@ -19,7 +29,7 @@ exports.saveIpLocation = function (db, req, res) {
   console.log("IP : ", ip);
 
   var options = {
-      uri: 'http://ip-api.com' + '/json/' + ((ip === "::1" || ip === "127.0.0.1") ? '62.210.34.252' : ip),
+      uri: 'http://ip-api.com' + '/json/``' + ((ip === "::1" || ip === "127.0.0.1") ? '62.210.34.252' : ip),
       method: 'GET',
       json:true
   }
@@ -197,6 +207,33 @@ function sortSuggestions (data, req, res) {
         return (b_common_int - a_common_int);
       });
       console.log("AFTER : ", data.users);
+      break;
+
+    case "loc":
+      console.log("SORT BY LOC");
+
+      var lat_lng = data.me.lat_lng ? data.me.lat_lng : data.me.ip_lat_lng;
+      console.log("LAT LNG : ", lat_lng);
+
+      data.users.sort(function (a, b) {
+
+        console.log("A : ", a);
+        console.log("B : ", b);
+
+        var a_lat_lng = a.lat_lng ? a.lat_lng : a.ip_lat_lng;
+        var b_lat_lng = b.lat_lng ? b.lat_lng : b.ip_lat_lng;
+
+        console.log("A LAT LNG : ", a_lat_lng);
+        console.log("B LAT LNG : ", b_lat_lng);
+
+        var a_dist = getDistanceFromLatLonInKm(a_lat_lng[0], a_lat_lng[1], lat_lng[0], lat_lng[1]);
+        var b_dist = getDistanceFromLatLonInKm(b_lat_lng[0], b_lat_lng[1], lat_lng[0], lat_lng[1]);
+
+        console.log("A_DIST : ", a_dist);
+        console.log("B_DIST : ", b_dist);
+
+        return (a_dist - b_dist);
+      });
       break;
   }
   res.render(__dirname + '/../views/templates/suggestions.ejs', data);
