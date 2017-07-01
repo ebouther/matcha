@@ -122,9 +122,11 @@ router.get('/contacts', function (req, res) {
 });
 
 router.get('/disconnect', function (req, res) {
-  req.session.destroy(function (err) {
-    res.redirect('/');
-  });
+  if (req.session) {
+    req.session.destroy(function (err) {
+      res.redirect('/');
+    });
+  } else {res.redirect('/');}
 });
 
 router.get('/chat', function (req, res) {

@@ -26,13 +26,14 @@ function deg2rad(deg) {
 exports.saveIpLocation = function (db, req, res) {
   var ip = req.ip;
 
-  console.log("IP : ", ip);
+  console.log("IP : (", ip, ")");
 
   var options = {
-      uri: 'http://ip-api.com' + '/json/``' + ((ip === "::1" || ip === "127.0.0.1") ? '62.210.34.252' : ip),
+      uri: 'http://ip-api.com' + '/json/' + ((ip === "::ffff:127.0.0.1" || ip === "::1" || ip === "127.0.0.1") ? '62.210.34.252' : ip),
       method: 'GET',
       json:true
   }
+  console.log("REQUEST URI : ", options.uri);
   request(options, function(err, result, body) {
     if (!err) {
       // request('https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyDc3Tx5tuzRnZ8KGgKRIdvHyi-6oTyZPCE&latlng=' + body.lat + ',' + body.lon, function (err, result, place) {
@@ -52,11 +53,14 @@ exports.saveIpLocation = function (db, req, res) {
       //   }
       //   res.redirect('/');
       // });
-      db.collection("users").update(
-        { username: req.session.username },
-        { $set: {ip_lat_lng: [body.lat, body.lng]} },
-        { upsert : true }
-      );
+      console.log("LAT LNG BODY : ", body);
+      if (body.lat && body.lon) {
+        db.collection("users").update(
+          { username: req.session.username },
+          { $set: {ip_lat_lng: [body.lat, body.lon]} },
+          { upsert : true }
+        );
+      }
     }
     res.redirect('/');
   });

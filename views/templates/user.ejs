@@ -97,6 +97,11 @@
                                           <td><span id="lastname"><%= user.lastname %></span></td>
                                         </tr>
                                         <tr>
+                                          <td>Age:</td>
+                                          <td><span id="age"><% if (locals.user.age) { %> <%= user.age %> <% } %></span>
+                                          </td>
+                                        </tr>
+                                        <tr>
                                           <td>Gender:</td>
                                           <td>
                                             <span id="gender">
@@ -119,6 +124,12 @@
                                               <% } %>
                                             </span>
                                            </td>
+                                        </tr>
+                                        <tr>
+                                          <td>Location</td>
+                                          <td>
+                                            <span id="geoloc"><% if (locals.user.location) { %> <%= user.location %> <% } %> </span>
+                                          </td>
                                         </tr>
                                         <tr>
                                           <td>Biography</td>
