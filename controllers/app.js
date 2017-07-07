@@ -195,6 +195,11 @@ app.post('/profile', function (req, res) {
                 {username: req.session.username},
                 {$pull: {like: req.body.content}}
               );
+              db.collection("users").update(
+                {username: req.body.content},
+                {$push: {"history": "<a href='/user?username=" + req.session.username + "'>Liked by " + req.session.username + "</a>"},
+                 $inc: {'popularity': 2} },
+              );
             } else {
               db.collection("users").update(
                 {username: req.session.username},
@@ -204,6 +209,35 @@ app.post('/profile', function (req, res) {
             }
           });
         break;
+        case "block":
+          db.collection("users").update(
+            {username: req.session.username},
+            {$push: {block: req.body.content}},
+            { upsert : true }
+          );
+          break;
+        case "report":
+          db.collection("users").findOne(
+            {username: req.body.content}, {}, function (err, user) {
+              if (user && user.report && user.report.indexOf(req.session) == -1) {
+
+                if (user.report.length > 3)  {
+                  db.collection("users").RemoveOne( {username: req.body.content} );
+
+                } else {
+
+                  db.collection("users").Update(
+                    {username: req.body.content},
+                    {$push: {report: req.session.username}},
+                    { upsert : true }
+                  );
+
+                }
+              }
+            }
+          );
+
+          break;
     }
   });
 });
@@ -307,14 +341,14 @@ app.get('/message', function (req, res) {
 
 
 
-io.on('connection', function(socket) {
-  console.log("NUMBER OF SOCKETS : " + Object.keys(io.sockets.sockets).length);
-
-  socket.on('message', function(msg) {
-    console.log("Chat msg");
-    io.emit('message', msg);
-  });
-});
+// io.on('connection', function(socket) {
+//   console.log("NUMBER OF SOCKETS : " + Object.keys(io.sockets.sockets).length);
+//
+//   socket.on('message', function(msg) {
+//     console.log("Chat msg");
+//     io.emit('message', msg);
+//   });
+// });
 
 http.listen(3000, function () {
   console.log('Example app listening on port 3000!');

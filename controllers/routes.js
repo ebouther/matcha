@@ -4,6 +4,7 @@ var router = express.Router();
 var path = require('path');
 var mongodb = require('mongodb'); //should be only present in models :/
 var assert = require('assert');
+var sendmail = require('sendmail')();
 
 var user = require("./user");
 
@@ -17,12 +18,11 @@ router.get('/', function (req, res) {
 
 router.get('/user', function (req, res) {
   if (req.session.username) {
-  	var db = new mongodb.Db('matcha', new mongodb.Server('localhost', 27017));
 	  mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
       assert.equal(null, err);
       assert.ok(db != null);
       if (req.query.username) {
-      	db.collection("users").findOneAndUpdate({username: req.query.username}, {$push: {"history": "Viewed by " + req.session.username}}, {upsert: true, projection:{password: 0, _id: 0}}, function(err, usr) {
+      	db.collection("users").findOneAndUpdate({username: req.query.username}, {$push: {"history": "<a href='/user?username=" + req.session.username + "'>Viewed by " + req.session.username + "</a>"}, $inc: {'popularity': 1} }, {upsert: true, projection:{password: 0, _id: 0}}, function(err, usr) {
       	  if (usr && usr.value && usr.value.username) {
             console.log("ISONLINE : ", user.isOnline(usr.value.username));
             usr.value.online = user.isOnline(usr.value.username);
@@ -38,14 +38,33 @@ router.get('/user', function (req, res) {
   }
 });
 
-//  ------ useless
-router.get('/setup', function (req, res) {
-  var db = new mongodb.Db('matcha', new mongodb.Server('localhost', 27017));
-  db.open(function(err, db) {
-    //var users var greetings = require("./greetings.js");= db.collection('users');
-    db.close();
-    });
+router.get('/forgot', function (req, res) {
+  if (!req.body.username)
     res.redirect('/');
+
+  mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
+    assert.equal(null, err);
+    assert.ok(db != null);
+    if (req.query.username) {
+    	db.collection("users").findOne({username: req.query.username}, {password: 0, _id: 0},  function(err, usr) {
+    	  if (usr &&  usr.email) {
+          sendmail({
+              from: 'admin@matcha.com',
+              to:  usr.email,
+              subject: 'Matcha - Forgot Password',
+              html: '',
+            }, function(err, reply) {
+              res.render(path.join(__dirname, '/../views/templates/index.ejs'),
+                        {alert: true,
+                        alert_type: "alert-success",
+                        alert_msg: "<strong> Success !</strong> Email sent."});
+          });
+        } else {
+          res.redirect('/');
+        }
+    	});
+    }
+  });
 });
 
 router.get('/search', function (req, res) {

@@ -33,6 +33,24 @@ $("#search").click(function () {
 	window.location.href = url;
 });
 
+function report(username) {
+	$.post('profile',
+		{
+				field: "report",
+				content: username
+		}
+	);
+}
+
+function block(username) {
+	$.post('profile',
+		{
+				field: "block",
+				content: username
+		}
+	);
+}
+
 
 function like(username) {
 	$.post('profile',

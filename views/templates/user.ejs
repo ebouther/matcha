@@ -53,7 +53,7 @@
                 <div class="container">
                   <div class="row">
                         <div class="col-lg-8" >
-                          <div class="panel panel-info"">
+                          <div class="panel panel-info">
                             <div class="panel-heading clearfix">
                           			<div class="container-fluid panel-container">
                           				<div class="col-xs-3 text-left">
@@ -66,6 +66,7 @@
                           				<div class="col-xs-3 text-right">
                           					<span class="panel-title">
                           						<span  style="color: <%= user.online ? 'green' : 'red' %>" class="glyphicon glyphicon-one-fine-dot"></span>
+                                      <%= user.popularity ? user.popularity : 0 %>
                           					</span>
                                   </div>
                                 </div>
@@ -151,6 +152,35 @@
                                       </tbody>
                                     </table>
                                   </div>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-md-6">
+                                <img <% if (locals.user.picture1) { %>
+                                  src="<%= user.picture1 %>"
+                                <% } %> id="profile-pic1" class="profile-pic">
+                              </div>
+                              <div class="col-md-6">
+                                <img <% if (locals.user.picture2) { %>
+                                  src="<%= user.picture2 %>"
+                                <% } %> id="profile-pic2" class="profile-pic">
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-md-4">
+                                <img <% if (locals.user.picture3) { %>
+                                  src="<%= user.picture3 %>"
+                                <% } %> id="profile-pic3" class="profile-pic">
+                              </div>
+                              <div class="col-md-4">
+                                <img <% if (locals.user.picture4) { %>
+                                  src="<%= user.picture4 %>"
+                                <% } %> id="profile-pic4" class="profile-pic">
+                              </div>
+                              <div class="col-md-4">
+                                <img <% if (locals.user.picture5) { %>
+                                  src="<%= picture5 %>"
+                                <% } %> id="profile-pic5" class="profile-pic">
                               </div>
                             </div>
                             <div class="panel-footer">
