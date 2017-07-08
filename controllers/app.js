@@ -316,10 +316,15 @@ app.post('/message', function (req, res) {
       if (like === true) {
         users.saveMessage(message);
 
-        Object.keys(io.sockets.sockets).forEach(function(socket_id) {
-          var user = io.sockets.sockets[socket_id];
-          if (user.request.session.username === to) {
-            io.to(socket_id).emit('message', message);
+      db.collection("users").findOne(
+        {username: req.body.to}, {}, function (err, user) {
+          if (!(user && user.block && user.block.indexOf(req.session) !== -1)) { // if not blocked by receiver then emit
+            Object.keys(io.sockets.sockets).forEach(function(socket_id) {
+              var user = io.sockets.sockets[socket_id];
+              if (user.request.session.username === to) {
+                io.to(socket_id).emit('message', message);
+              }
+            });
           }
         });
       }
