@@ -31,6 +31,12 @@ router.get('/user', function (req, res) {
             res.render(__dirname + '/../views/templates/suggestions.ejs');
           }
       	});
+        Object.keys(io.sockets.sockets).forEach(function(socket_id) {
+          var user = io.sockets.sockets[socket_id];
+          if (user.request.session.username === req.query.username) {
+            io.to(socket_id).emit('notif', {message: req.session.username + "viewed your profile"});
+          }
+        });
       }
     });
   } else {

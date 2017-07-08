@@ -184,7 +184,7 @@ app.post('/profile', function (req, res) {
       case "like":
         db.collection("users").findOne(
           {username: req.session.username},
-          {like: 1, profile_epic: 1},
+          {like: 1, profile_pic: 1},
           function(err, user) {
             if (user.profile_pic
                 && user.profile_pic !== ""
@@ -200,12 +200,37 @@ app.post('/profile', function (req, res) {
                 {$push: {"history": "<a href='/user?username=" + req.session.username + "'>Liked by " + req.session.username + "</a>"},
                  $inc: {'popularity': 2} }
               );
+              db.collection("users").findOne(
+                {username: req.body.content},
+                {like: 1},
+                function(err, user) {
+                  var message = {message: req.session.username + "liked you"};
+                  if (user
+                      && user.like
+                      && user.like.indexOf(req.session.username) !== -1) {
+                        message.message = req.session.username + "liked you back";
+                  }
+
+                  Object.keys(io.sockets.sockets).forEach(function(socket_id) {
+                    var user = io.sockets.sockets[socket_id];
+                    if (user.request.session.username === req.body.content) {
+                      io.to(socket_id).emit('notif', message);
+                    }
+                  });
+                  
+                });
             } else {
               db.collection("users").update(
                 {username: req.session.username},
                 {$push: {like: req.body.content}},
                 { upsert : true }
               );
+              Object.keys(io.sockets.sockets).forEach(function(socket_id) {
+                var user = io.sockets.sockets[socket_id];
+                if (user.request.session.username === req.body.content) {
+                  io.to(socket_id).emit('notif', {message: req.session.username + "unliked you"});
+                }
+              });
             }
           });
         break;
