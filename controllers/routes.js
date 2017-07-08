@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
+var io = require('./app').io;
+
 var path = require('path');
 var mongodb = require('mongodb'); //should be only present in models :/
 var assert = require('assert');
@@ -31,12 +33,18 @@ router.get('/user', function (req, res) {
             res.render(__dirname + '/../views/templates/suggestions.ejs');
           }
       	});
+        var message = req.session.username + " viewed your profile";
         Object.keys(io.sockets.sockets).forEach(function(socket_id) {
           var user = io.sockets.sockets[socket_id];
           if (user.request.session.username === req.query.username) {
-            io.to(socket_id).emit('notif', {message: req.session.username + "viewed your profile"});
+            io.to(socket_id).emit('notif', message);
           }
         });
+        db.collection("users").update(
+          { username: req.query.username },
+          { $push: {"notification": message} },
+          { upsert : true }
+        );
       }
     });
   } else {
@@ -121,7 +129,7 @@ router.get('/contacts', function (req, res) {
       db.collection("users").findOne({username: req.session.username}, {password: 0, _id: 0}, function(err, me) {
         console.log("********   ME : ", me);
         var promises = [];
-          if (me.like) {
+          if (me && me.like) {
             me.like.forEach(function(username) {
               //promises.push()
               promises.push(new Promise((resolve, reject) => {
@@ -142,6 +150,29 @@ router.get('/contacts', function (req, res) {
             res.json(contacts.filter(Boolean));
           });
       });
+    }
+  });
+});
+
+router.get('/notifs', function (req, res) {
+  console.log("GET /notifs");
+  if (!req.session.username)
+  {
+    res.redirect('/');
+    return;
+  }
+  mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
+    assert.equal(null, err);
+    assert.ok(db != null);
+    if (req.session.username) {
+      db.collection("users").findOne({username: req.session.username}, {notification: 1}, function(err, me) {
+          var notifs = [];
+          if (me && me.notification) {
+            notifs = me.notification;
+          }
+          res.json(notifs);
+      });
+
     }
   });
 });

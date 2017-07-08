@@ -182,6 +182,7 @@ app.post('/profile', function (req, res) {
         );
         break;
       case "like":
+        console.log("*** LIKE REQUEST");
         db.collection("users").findOne(
           {username: req.session.username},
           {like: 1, profile_pic: 1},
@@ -189,26 +190,43 @@ app.post('/profile', function (req, res) {
             if (user.profile_pic
                 && user.profile_pic !== ""
                 && user.like
-                && user.like.indexOf(req.body.content) !== -1)
+                && user.like.indexOf(req.body.content) !== -1) // If already liked
             {
-              db.collection("users").update(
+              db.collection("users").update( // Remove from like list
                 {username: req.session.username},
                 {$pull: {like: req.body.content}}
               );
+
+              var message = req.session.username + " unliked you";
+              Object.keys(io.sockets.sockets).forEach(function(socket_id) {
+                var user = io.sockets.sockets[socket_id];
+                if (user.request.session.username === req.body.content) {
+                  io.to(socket_id).emit('notif', message);
+                }
+              });
               db.collection("users").update(
-                {username: req.body.content},
-                {$push: {"history": "<a href='/user?username=" + req.session.username + "'>Liked by " + req.session.username + "</a>"},
-                 $inc: {'popularity': 2} }
+                { username: req.body.content },
+                { $push: {"notification": message} },
+                { upsert : true }
               );
+
+            } else {
+
+              db.collection("users").update(
+                {username: req.session.username},
+                {$push: {like: req.body.content}},
+                { upsert : true }
+              );
+
               db.collection("users").findOne(
                 {username: req.body.content},
                 {like: 1},
                 function(err, user) {
-                  var message = {message: req.session.username + "liked you"};
+                  var message = req.session.username + " liked you";
                   if (user
                       && user.like
                       && user.like.indexOf(req.session.username) !== -1) {
-                        message.message = req.session.username + "liked you back";
+                        message = req.session.username + " liked you back";
                   }
 
                   Object.keys(io.sockets.sockets).forEach(function(socket_id) {
@@ -217,20 +235,17 @@ app.post('/profile', function (req, res) {
                       io.to(socket_id).emit('notif', message);
                     }
                   });
-                  
+
+                  db.collection("users").update(
+                    {username: req.body.content},
+                    {$push: {"history": "<a href='/user?username=" + req.session.username + "'>Liked by " + req.session.username + "</a>"},
+                     $push: {"notification": message},
+                     $inc: {'popularity': 2}},
+                     { upsert : true }
+                  );
+
                 });
-            } else {
-              db.collection("users").update(
-                {username: req.session.username},
-                {$push: {like: req.body.content}},
-                { upsert : true }
-              );
-              Object.keys(io.sockets.sockets).forEach(function(socket_id) {
-                var user = io.sockets.sockets[socket_id];
-                if (user.request.session.username === req.body.content) {
-                  io.to(socket_id).emit('notif', {message: req.session.username + "unliked you"});
-                }
-              });
+
             }
           });
         break;

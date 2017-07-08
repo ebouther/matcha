@@ -43,6 +43,30 @@ function getContacts(cb) {
     });
  }
 
+ function getNotifs(cb) {
+   console.log("getNotifs()");
+   $.ajax({
+        url: '/notifs',
+        type: 'GET',
+        success: function(notifs) {
+           cb(notifs);
+        }
+     });
+  }
+
+  function fillNotifsList () {
+    $("#notifications").empty();
+    getNotifs(function (notifs) {
+      notifs.forEach(function (notif) {
+        console.log("Notif: " + notif);
+        if (notif)  {
+          var $li = $('<li><span>' + notif + '</span></li>');
+          $("#notifications").append($li);
+        }
+      });
+    });
+  }
+
 function new_chat(username) {
     console.log("NEW CHAT :" + username);
      var size = $( ".chat-window" ).last().css("right");
@@ -98,6 +122,8 @@ function new_chat(username) {
 $(function () {
   chat_window = $( "#chat_window_1" ).clone();
   $( "#chat_window_1" ).remove();
+
+  fillNotifsList();
 
   getContacts(function (contacts) {
     contacts.forEach(function (contact) {
@@ -164,4 +190,6 @@ socket.on('message', function(msg){
 socket.on('notif', function(msg){
   console.log("notif (" + msg + ")");
   $('#notifs_b').css('background-color', 'red');
+
+  fillNotifsList();
 });
