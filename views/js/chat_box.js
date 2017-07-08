@@ -163,4 +163,5 @@ socket.on('message', function(msg){
 
 socket.on('notif', function(msg){
   console.log("notif (" + msg + ")");
+  $('#notifs_b').css('background-color', 'red');
 });

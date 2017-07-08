@@ -1,6 +1,49 @@
 body {
     padding-top: 90px;
 }
+
+#logo_box {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+
+
+
+#logo {
+  font-family: 'Open Sans', sans-serif;
+  color: #5987e0;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-size: 150px;
+  font-weight: 800;
+  letter-spacing: -3px;
+  line-height: 1;
+  text-shadow: #c6daff 3px 2px 0;
+  position: relative;
+}
+@media screen and (min-width: 200px) and (max-width: 640px) {
+  #logo {
+    font-size: 80px;
+  }
+}
+
+#logo:after {
+  content:"matcha";
+  position: absolute;
+  left: 10px;
+  top: 20px;
+}
+#logo:after {
+  background-image: -webkit-linear-gradient(left top, transparent 0%, transparent 25%, #59bde0 25%, #6b1a31 50%, transparent 50%, transparent 75%, #0f7fff 75%);
+  background-size: 4px 4px;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  z-index: -5;
+  display: block;
+  text-shadow: none;
+}
+
 .panel-login {
 	border-color: #ccc;
 	-webkit-box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.2);
@@ -23,7 +66,7 @@ body {
 	transition: all 0.1s linear;
 }
 .panel-login>.panel-heading a.active{
-	color: #029f5b;
+	color: #6096ff;
 	font-size: 18px;
 }
 .panel-login>.panel-heading hr{
@@ -81,7 +124,7 @@ body {
 }
 
 .btn-register {
-	background-color: #1CB94E;
+	background-color: #59B2E0;
 	outline: none;
 	color: #fff;
 	font-size: 14px;
@@ -89,11 +132,11 @@ body {
 	font-weight: normal;
 	padding: 14px 0;
 	text-transform: uppercase;
-	border-color: #1CB94A;
+	border-color: #59B2E6;
 }
 .btn-register:hover,
 .btn-register:focus {
-	color: #fff;
-	background-color: #1CA347;
-	border-color: #1CA347;
+  color: #fff;
+	background-color: #53A3CD;
+	border-color: #53A3CD;
 }

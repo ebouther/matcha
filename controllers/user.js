@@ -36,23 +36,6 @@ exports.saveIpLocation = function (db, req, res) {
   console.log("REQUEST URI : ", options.uri);
   request(options, function(err, result, body) {
     if (!err) {
-      // request('https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyDc3Tx5tuzRnZ8KGgKRIdvHyi-6oTyZPCE&latlng=' + body.lat + ',' + body.lon, function (err, result, place) {
-      //   place = JSON.parse(place);
-      //
-      //   if (!err && place.results
-      //     && place.results.length > 0
-      //     && place.results[0].place_id)
-      //   {
-      //     var ip_loc = place.results[0].place_id;
-      //
-      //     db.collection("users").update(
-      //       { username: req.session.username },
-      //       { $set: {ip_loc: ip_loc} },
-      //       { upsert : true }
-      //     );
-      //   }
-      //   res.redirect('/');
-      // });
       console.log("LAT LNG BODY : ", body);
       if (body.lat && body.lon) {
         db.collection("users").update(

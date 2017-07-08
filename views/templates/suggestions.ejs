@@ -62,80 +62,116 @@
                   <div class="row">
                         <div class="col-lg-8" >
                           <div class="well">
-                            <h3>Advanced Search</h3>
-                              <div class="form-group">
-                                <div class="col-lg-6">
-                                  Age Range<input id="age_min" type="number" value="" max="100" min="18" step="1">
-                                  <input id="age_max" type="number" value="" max="100" min="18" step="1">
-                                </div>
-                              </div>
-                              <div class="form-group">
-                                <div class="col-lg-6">
-                                  Popularity Range<input id="pop_min" type="number" value="" max="100" min="18" step="1">
-                                  <input id="pop_max" type="number" value="" max="100" min="18" step="1">
-                                </div>
-                              </div>
-                              <div class="form-group">
-                                <div class="col-lg-6">
-                                  Location<input id="geoloc" class="controls" type="text" placeholder="City" value="" >
-                                </div>
-                              </div>
-                              <div class="form-group">
-                                <div class="col-lg-6">
-                                  Filter<select id="sort" class="selectpicker">
-                                          <option value="age">Age</option>
-                                          <option value="loc">Location</option>
-                                          <option value="pop">Popularity</option>
-                                          <option value="tag">Interests</option>
-                                        </select>
 
+                            <div class="form-group">
+                              <h3>Advanced Search</h3>
+                              <br>
+                            </div>
+
+                              <div class="form-group">
+                                <div class="col-lg-6">
+                                  <label for="age_min">Age Min</label>
+                                  <input id="age_min" class="form-control" placeholder="Age Min" type="number" value="" max="100" min="18" step="1">
+                                  <br>
+                                </div>
+                              </div>
+
+                              <div class="form-group">
+                                <div class="col-lg-6">
+                                  <label for="age_max">Age Max</label>
+                                  <input id="age_max" class="form-control" placeholder="Age Max" type="number" value="" max="100" min="18" step="1">
+                                  <br>
+                                </div>
+                              </div>
+
+                              <div class="form-group">
+                                <div class="col-lg-6">
+                                  <label for="pop_min">Popularity Min</label>
+                                  <input id="pop_min" class="form-control" placeholder="Popularity Min" type="number" value="" max="999999999" min="0" step="1">
+                                  <br>
+                                </div>
+                              </div>
+
+                              <div class="form-group">
+                                <div class="col-lg-6">
+                                  <label for="pop_max">Popularity Max</label>
+                                  <input id="pop_max" class="form-control" placeholder="Popularity Max" type="number" value="" max="999999999" min="0" step="1">
+                                  <br>
+                                </div>
+                              </div>
+
+                              <div class="form-group">
+                                <div class="col-lg-6">
+                                  <label for="geoloc">Location</label>
+                                  <input id="geoloc" class="form-control controls" type="text" placeholder="City" value="" >
+                                  <br>
+                                </div>
+                              </div>
+
+                              <div class="form-group">
+                                <div class="col-lg-6">
+                                  <label for="sort">Sort by</label>
+                                  <select id="sort" class="form-control" class="selectpicker">
+                                    <option value="None" selected>None</option>
+                                    <option value="age">Age</option>
+                                    <option value="loc">Location</option>
+                                    <option value="pop">Popularity</option>
+                                    <option value="tag">Interests</option>
+                                  </select>
+                                  <br>
                                 </div>
                               </div>
                               <div class="form-group">
-                                  <input id="interests" type="text" value="" data-role="tagsinput" placeholder="Interests">
+                                <div class="col-lg-6">
+                                  <label for="interests">Interests</label>
+                                  <input id="interests" class="form-control" type="text" value="" data-role="tagsinput" placeholder="Interests">
+                                  <br>
+                                </div>
                               </div>
+
                               <div class="form-group">
-                                <button id="search" class="btn btn-default" type="submit">
+                                <button id="search" class="btn btn-primary" type="submit">
                                   <span class="glyphicon glyphicon-search"></span>
                                 </button>
                               </div>
                           </div>
 
+                          <!-- <div class="row row-eq-height"> -->
                           <%
                             if (locals.users)
                               for (var i=0; i < users.length; i++) {
                           %>
                           <div class="col-md-3 col-lg-3 " align="center">
-                          <div class="panel panel-info">
-                            <div class="panel-heading" onclick="javascript:location.href='user?username=<%= users[i].username %>'">
-                              <h3 class="panel-title"><%= users[i].firstname + " " + users[i].lastname %></h3>
-                            </div>
-                            <div class="panel-body" onclick="javascript:location.href='user?username=<%= users[i].username %>'">
-                              <div class="row">
+                            <div id="user" class="panel panel-info">
+                              <div class="panel-heading" onclick="javascript:location.href='user?username=<%= users[i].username %>'">
+                                <h3 class="panel-title"><%= users[i].firstname + " " + users[i].lastname %></h3>
+                              </div>
+                              <div class="panel-body" onclick="javascript:location.href='user?username=<%= users[i].username %>'">
+                                <div class="row">
 
-                                  <img id="profile_pic" alt="profile picture"
-                                    src="<%if (users[i].profile_pic) {%>
-                                          <%= users[i]["picture" + users[i].profile_pic] %>
-                                       <% } else { %>
-                                          img/profile_default.jpg
-                                       <% } %>"
-                                    class="img-circle img-responsive">
+                                    <img id="profile_pic" alt="profile picture"
+                                      src="<%if (users[i].profile_pic) {%>
+                                            <%= users[i]["picture" + users[i].profile_pic] %>
+                                         <% } else { %>
+                                            img/profile_default.jpg
+                                         <% } %>"
+                                      class="img-circle img-responsive">
 
+                                </div>
+                              </div>
+                              <div class="panel-footer">
+                                <% if (locals.me && me.profile_pic && me.profile_pic !== "") { %>
+                                  <a id="<%= users[i].username %>" data-original-title="Like" onclick="javascript:like('<%= users[i].username %>')" data-toggle="tooltip" type="button" class="like_b btn btn-sm btn-danger"><i class="glyphicon glyphicon-heart"></i></a>
+                                <% } %>
+                                <span class="pull-right">
+                                  <a data-original-title="Block" onclick="javascript:block('<%= users[i].username %>')" data-toggle="tooltip" type="button" class="btn btn-sm btn-warning"><i class="glyphicon glyphicon-remove"></i></a>
+                                  <a data-original-title="Report" onclick="javascript:report('<%= users[i].username %>')" data-toggle="tooltip" type="button" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-remove"></i></a>
+                                </span>
                               </div>
                             </div>
-                            <div class="panel-footer">
-                              <a id="<%= users[i].username %>" onclick="javascript:location.href='chat?username=<%= users[i].username %>'" data-original-title="Chat" data-toggle="tooltip" type="button" class="chat_b btn btn-sm btn-primary"><i class="glyphicon glyphicon-envelope"></i></a>
-                              <% if (locals.me && me.profile_pic && me.profile_pic !== "") { %>
-                                <a id="<%= users[i].username %>" data-original-title="Like" onclick="javascript:like('<%= users[i].username %>')" data-toggle="tooltip" type="button" class="like_b btn btn-sm btn-danger"><i class="glyphicon glyphicon-heart"></i></a>
-                              <% } %>
-                              <span class="pull-right">
-                                <a data-original-title="Block" onclick="javascript:block('<%= users[i].username %>')" data-toggle="tooltip" type="button" class="btn btn-sm btn-warning"><i class="glyphicon glyphicon-remove"></i></a>
-                                <a data-original-title="Report" onclick="javascript:report('<%= users[i].username %>')" data-toggle="tooltip" type="button" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-remove"></i></a>
-                              </span>
-                            </div>
                           </div>
-                        </div>
                           <% } %>
+                          </div>
                         </div>
                       </div>
                     </div>

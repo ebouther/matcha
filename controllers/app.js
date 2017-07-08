@@ -71,7 +71,7 @@ app.post('/login', function (req, res) {
              alert_type: "alert-warning",
              alert_msg: "<strong>Warning !</strong> Wrong password."});
              return;
-         } else {
+         } else {[]
           req.session.username = req.body.username;
           if (!doc.location || doc.location === "") {
             console.log("NO LOCATION SAVED : ", doc);
@@ -198,7 +198,7 @@ app.post('/profile', function (req, res) {
               db.collection("users").update(
                 {username: req.body.content},
                 {$push: {"history": "<a href='/user?username=" + req.session.username + "'>Liked by " + req.session.username + "</a>"},
-                 $inc: {'popularity': 2} },
+                 $inc: {'popularity': 2} }
               );
             } else {
               db.collection("users").update(

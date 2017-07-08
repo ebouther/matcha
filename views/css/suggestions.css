@@ -1,6 +1,16 @@
 #readonly_tag .bootstrap-tagsinput .tag [data-role="remove"] { display: none; }
 #readonly_tag .bootstrap-tagsinput input { display: none; }
 
+
+#user {
+  overflow: hidden;
+}
+
+#profile_pic {
+  width: 100px;
+  height: 150px;
+}
+
 .form-group {
   text-align: center;
 }
