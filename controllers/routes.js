@@ -105,9 +105,10 @@ router.post('/del_notifs', function (req, res) {
       { $set: {"notification": []} },
       { upsert : true }
     );
-
+    
   }
 
+  res.end();
 });
 
 

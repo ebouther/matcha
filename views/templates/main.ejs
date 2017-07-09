@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<div><!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -69,19 +69,19 @@
                                   <img id="profile-pic" alt="profile picture"
                                     src="<% switch (locals.profile_pic) {
                                             case '0': %>
-                                          <%= picture0 %>
+                                          <%= locals.picture0 ? picture0 : 'img/profile_default.jpg' %>
                                           <%  break; %>
                                           <% case '1': %>
-                                          <%= picture1 %>
+                                          <%= locals.picture1 ? picture1 : 'img/profile_default.jpg' %>
                                           <%  break; %>
                                           <% case '2': %>
-                                          <%= picture2 %>
+                                          <%= locals.picture2 ? picture0 : 'img/profile_default.jpg' %>
                                           <%  break; %>
                                           <% case '3': %>
-                                          <%= picture3 %>
+                                          <%= locals.picture3 ? picture0 : 'img/profile_default.jpg' %>
                                           <%  break; %>
                                           <% case '4': %>
-                                          <%= picture4 %>
+                                          <%= locals.picture4 ? picture0 : 'img/profile_default.jpg' %>
                                           <%  break; %>
                                           <% default: %>
                                             img/profile_default.jpg
@@ -177,38 +177,67 @@
                                     </tbody>
                                   </table>
                                   <div class="row">
-                                    <div class="col-md-6">
-                                      <img <% if (locals.picture1) { %>
-                                        src="<%= picture1 %>"
-                                      <% } %> id="profile-pic1" class="profile-pic">
-                                      <input type="file" id="upload-pic1" class="">
+
+                                    <div class="col-md-6 pic_box">
+                                      <label for="upload-pic1" class="upload_btn btn btn-default" > Upload </label>
+                                        <div>
+                                          <input id="upload-pic1" type="file" class="">
+                                          <img class="profile-pic img-responsive img-rounded" <% if (locals.picture1) { %>
+                                            src="<%= picture1 %>"
+                                          <% } %> id="profile-pic1">
+                                        </div>
                                     </div>
-                                    <div class="col-md-6">
-                                      <img <% if (locals.picture2) { %>
-                                        src="<%= picture2 %>"
-                                      <% } %> id="profile-pic2" class="profile-pic">
-                                      <input type="file" id="upload-pic2" class="">
+
+                                    <div class="col-md-6 pic_box">
+                                      <label for="upload-pic2" class="upload_btn btn btn-default" > Upload </label>
+                                        <div>
+                                          <img class="profile-pic img-responsive img-rounded" <% if (locals.picture2) { %>
+                                            src="<%= picture2 %>"
+                                          <% } %> id="profile-pic2">
+                                          <input type="file" id="upload-pic2" class="">
+                                        </div>
+
                                     </div>
+
                                   </div>
+                                  <br>
                                   <div class="row">
-                                    <div class="col-md-4">
-                                      <img <% if (locals.picture3) { %>
-                                        src="<%= picture3 %>"
-                                      <% } %> id="profile-pic3" class="profile-pic">
-                                      <input type="file" id="upload-pic3" class="">
+
+                                    <div class="col-md-4 pic_box">
+                                      <label for="upload-pic3" class="upload_btn btn btn-default" > Upload </label>
+                                        <div>
+                                          <img class="profile-pic img-responsive img-rounded" <% if (locals.picture3) { %>
+                                            src="<%= picture3 %>"
+                                          <% } %> id="profile-pic3">
+                                          <input type="file" id="upload-pic3" class="">
+                                        </div>
+
                                     </div>
-                                    <div class="col-md-4">
-                                      <img <% if (locals.picture4) { %>
-                                        src="<%= picture4 %>"
-                                      <% } %> id="profile-pic4" class="profile-pic">
-                                      <input type="file" id="upload-pic4" class="">
+
+
+                                    <div class="col-md-4 pic_box">
+                                      <label for="upload-pic4" class="upload_btn btn btn-default" > Upload </label>
+                                        <div>
+                                          <img class="profile-pic img-responsive img-rounded" <% if (locals.picture4) { %>
+                                            src="<%= picture4 %>"
+                                          <% } %> id="profile-pic4">
+                                          <input type="file" id="upload-pic4" class="">
+                                        </div>
+
                                     </div>
-                                    <div class="col-md-4">
-                                      <img <% if (locals.picture5) { %>
-                                        src="<%= picture5 %>"
-                                      <% } %> id="profile-pic5" class="profile-pic">
-                                      <input type="file" id="upload-pic5" class="">
+
+
+                                    <div class="col-md-4 pic_box">
+                                      <label for="upload-pic5" class="upload_btn btn btn-default" > Upload </label>
+                                        <div>
+                                          <img class="profile-pic img-responsive img-rounded" <% if (locals.picture5) { %>
+                                            src="<%= picture5 %>"
+                                          <% } %> id="profile-pic5">
+                                          <input type="file" id="upload-pic5" class="">
+                                        </div>
+
                                     </div>
+
                                   </div>
                                 </div>
                               </div>

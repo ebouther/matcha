@@ -64,10 +64,15 @@
                           				</div>
                           				<div class="col-xs-6 text-center "></div>
                           				<div class="col-xs-3 text-right">
-                          					<span class="panel-title">
+                          					<!-- <span class="panel-title"> -->
                           						<span  style="color: <%= user.online ? 'green' : 'red' %>" class="glyphicon glyphicon-one-fine-dot"></span>
-                                      Popularity: <%= user.popularity ? user.popularity : 0 %>
-                          					</span>
+                                      <span>
+                                        <% if (!user.online && user.last_log) {%>
+                                          <%= user.last_log.toDateString() %>
+                                        <% } %>
+                                      </span>
+                                      <span>Popularity: <%= user.popularity ? user.popularity : 0 %></span>
+                          					<!-- </span> -->
                                   </div>
                                 </div>
                             </div>
@@ -151,38 +156,42 @@
                                         </tr>
                                       </tbody>
                                     </table>
+
+                                    <div class="row row-eq-height">
+                                      <div class="col-md-6 pic_box">
+                                        <img class="img-rounded img-responsive" <% if (locals.user.picture1) { %>
+                                          src="<%= user.picture1 %>"
+                                        <% } %> id="profile-pic1" class="profile-pic">
+                                      </div>
+                                      <div class="col-md-6 pic_box">
+                                        <img class="img-responsive img-rounded" <% if (locals.user.picture2) { %>
+                                          src="<%= user.picture2 %>"
+                                        <% } %> id="profile-pic2" class="profile-pic">
+                                      </div>
+                                    </div>
+                                    <div class="row row-eq-height">
+                                      <div class="col-md-4 pic_box">
+                                        <img class="img-responsive img-rounded" <% if (locals.user.picture3) { %>
+                                          src="<%= user.picture3 %>"
+                                        <% } %> id="profile-pic3" class="profile-pic">
+                                      </div>
+                                      <div class="col-md-4 pic_box">
+                                        <img class="img-responsive img-rounded" <% if (locals.user.picture4) { %>
+                                          src="<%= user.picture4 %>"
+                                        <% } %> id="profile-pic4" class="profile-pic">
+                                      </div>
+                                      <div class="col-md-4 pic_box">
+                                        <img class="img-responsive img-rounded" <% if (locals.user.picture5) { %>
+                                          src="<%= user.picture5 %>"
+                                        <% } %> id="profile-pic5" class="profile-pic">
+                                      </div>
+                                    </div>
+
                                   </div>
                               </div>
                             </div>
-                            <div class="row">
-                              <div class="col-md-6">
-                                <img <% if (locals.user.picture1) { %>
-                                  src="<%= user.picture1 %>"
-                                <% } %> id="profile-pic1" class="profile-pic">
-                              </div>
-                              <div class="col-md-6">
-                                <img <% if (locals.user.picture2) { %>
-                                  src="<%= user.picture2 %>"
-                                <% } %> id="profile-pic2" class="profile-pic">
-                              </div>
-                            </div>
-                            <div class="row">
-                              <div class="col-md-4">
-                                <img <% if (locals.user.picture3) { %>
-                                  src="<%= user.picture3 %>"
-                                <% } %> id="profile-pic3" class="profile-pic">
-                              </div>
-                              <div class="col-md-4">
-                                <img <% if (locals.user.picture4) { %>
-                                  src="<%= user.picture4 %>"
-                                <% } %> id="profile-pic4" class="profile-pic">
-                              </div>
-                              <div class="col-md-4">
-                                <img <% if (locals.user.picture5) { %>
-                                  src="<%= picture5 %>"
-                                <% } %> id="profile-pic5" class="profile-pic">
-                              </div>
-                            </div>
+
+
                             <div class="panel-footer">
                               <a data-original-title="Chat" data-toggle="tooltip" type="button" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-envelope"></i></a>
                               <a data-original-title="Like" data-toggle="tooltip" type="button" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-heart"></i></a>

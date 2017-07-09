@@ -20,3 +20,12 @@ footer
   max-height: 500px;
   margin-bottom: 50px;
 }
+
+
+input[type="file"] {
+  display: none !important;
+}
+
+.upload_btn {
+  width: 100%;
+}

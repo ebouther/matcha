@@ -57,6 +57,8 @@ function getContacts(cb) {
   function fillNotifsList () {
     $("#notifications").empty();
     getNotifs(function (notifs) {
+      if (notifs.length > 0)
+        $('#notifs_b').css('background-color', 'red');
       notifs.forEach(function (notif) {
         console.log("Notif: " + notif);
         if (notif)  {
@@ -117,7 +119,6 @@ function new_chat(username) {
         });
      }
   }
-  //$("<li><a href='#' id='new_chat>Toto</a></li>");
 
 $(function () {
   chat_window = $( "#chat_window_1" ).clone();
@@ -190,7 +191,7 @@ socket.on('message', function(msg){
 
 
 $("#contacts-dropup").click(function () {
-  if ($("#contacts").length === 1) {
+  if ($("#contacts").find("li").length === 0) {
     $("#contacts").append($('<li><img src="https://pbs.twimg.com/profile_images/505877362873880576/mC7cTyN3.jpeg"></img></li>'));
   }
 });
@@ -211,7 +212,7 @@ $("#notifs_b").click(function () {
   $('#notifs_b').css('background-color', '');
   $.post('del_notifs');
   console.log("LENGTH : ", $("#notifications").length);
-  if ($("#notifications").length === 1) {
+  if ($("#notifications").find("li").length === 0) {
     $("#notifications").append($('<li><span>¯\\_(ツ)_/¯</span></li>'));
   }
 });
