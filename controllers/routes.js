@@ -3,8 +3,10 @@ var router = express.Router();
 
 var io = require('./app').io;
 
-var path = require('path');
 var mongodb = require('mongodb'); //should be only present in models :/
+var db = require('./app').db;
+
+var path = require('path');
 var assert = require('assert');
 var sendmail = require('sendmail')();
 
@@ -20,11 +22,9 @@ router.get('/', function (req, res) {
 
 router.get('/user', function (req, res) {
   if (req.session.username) {
-	  mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
-      assert.equal(null, err);
-      assert.ok(db != null);
+
       if (req.query.username) {
-      	db.collection("users").findOneAndUpdate({username: req.query.username}, {$push: {"history": "<a href='/user?username=" + req.session.username + "'>Viewed by " + req.session.username + "</a>"}, $inc: {'popularity': 1} }, {upsert: true, projection:{password: 0, _id: 0}}, function(err, usr) {
+      	req.db.collection("users").findOneAndUpdate({username: req.query.username}, {$push: {"history": "<a href='/user?username=" + req.session.username + "'>Viewed by " + req.session.username + "</a>"}, $inc: {'popularity': 1} }, {upsert: true, projection:{password: 0, _id: 0}}, function(err, usr) {
       	  if (usr && usr.value && usr.value.username) {
             console.log("ISONLINE : ", user.isOnline(usr.value.username));
             usr.value.online = user.isOnline(usr.value.username);
@@ -40,13 +40,12 @@ router.get('/user', function (req, res) {
             io.to(socket_id).emit('notif', message);
           }
         });
-        db.collection("users").update(
+        req.db.collection("users").update(
           { username: req.query.username },
           { $push: {"notification": message} },
           { upsert : true }
         );
       }
-    });
   } else {
     res.render(path.join(__dirname, '/../views/templates/index.ejs'), { alert: false});
   }
@@ -56,11 +55,8 @@ router.get('/forgot', function (req, res) {
   if (!req.body.username)
     res.redirect('/');
 
-  mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
-    assert.equal(null, err);
-    assert.ok(db != null);
     if (req.query.username) {
-    	db.collection("users").findOne({username: req.query.username}, {password: 0, _id: 0},  function(err, usr) {
+    	req.db.collection("users").findOne({username: req.query.username}, {password: 0, _id: 0},  function(err, usr) {
     	  if (usr &&  usr.email) {
           sendmail({
               from: 'admin@matcha.com',
@@ -78,15 +74,6 @@ router.get('/forgot', function (req, res) {
         }
     	});
     }
-  });
-});
-
-router.get('/search', function (req, res) {
-  var login = req.query.login;
-  mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
-    assert.equal(null, err);
-    assert.ok(db != null);
-  });
 });
 
 router.get('/suggestions', function (req, res) {
@@ -95,11 +82,8 @@ router.get('/suggestions', function (req, res) {
     res.redirect('/');
     return;
   }
-  mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
-    assert.equal(null, err);
-    assert.ok(db != null);
     if (req.query.username) {
-      db.collection("users").findOne({username: req.query.username}, {password: 0, _id: 0}, function(err, doc) {
+      req.db.collection("users").findOne({username: req.query.username}, {password: 0, _id: 0}, function(err, doc) {
         if (doc) {
           res.render(__dirname + '/../views/templates/suggestions.ejs', {users: [doc]});
         }
@@ -110,8 +94,22 @@ router.get('/suggestions', function (req, res) {
     } else {
       user.loadSuggestions(db, req, res);
     }
-  });
 });
+
+router.post('/del_notifs', function (req, res) {
+
+  if (req.session.username) {
+
+    req.db.collection("users").update(
+      { username: req.session.username },
+      { $set: {"notification": []} },
+      { upsert : true }
+    );
+
+  }
+
+});
+
 
 router.get('/contacts', function (req, res) {
   console.log("GET /contacts");
@@ -120,20 +118,18 @@ router.get('/contacts', function (req, res) {
     res.redirect('/');
     return;
   }
-  mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
-    assert.equal(null, err);
-    assert.ok(db != null);
+
     if (req.session.username) {
       var contacts = [];
       console.log("********   USERNAME : ", req.session.username);
-      db.collection("users").findOne({username: req.session.username}, {password: 0, _id: 0}, function(err, me) {
+      req.db.collection("users").findOne({username: req.session.username}, {password: 0, _id: 0}, function(err, me) {
         console.log("********   ME : ", me);
         var promises = [];
           if (me && me.like) {
             me.like.forEach(function(username) {
               //promises.push()
               promises.push(new Promise((resolve, reject) => {
-                db.collection("users").findOne({username: username}, {password: 0, _id: 0}, function(err, user) {
+                req.db.collection("users").findOne({username: username}, {password: 0, _id: 0}, function(err, user) {
                   if (user && user.like && user.like.indexOf(req.session.username) !== -1) {
                     console.log("CONTACT : " + username);
                     //contacts.push(username);
@@ -151,7 +147,7 @@ router.get('/contacts', function (req, res) {
           });
       });
     }
-  });
+
 });
 
 router.get('/notifs', function (req, res) {
@@ -161,11 +157,8 @@ router.get('/notifs', function (req, res) {
     res.redirect('/');
     return;
   }
-  mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
-    assert.equal(null, err);
-    assert.ok(db != null);
     if (req.session.username) {
-      db.collection("users").findOne({username: req.session.username}, {notification: 1}, function(err, me) {
+      req.db.collection("users").findOne({username: req.session.username}, {notification: 1}, function(err, me) {
           var notifs = [];
           if (me && me.notification) {
             notifs = me.notification;
@@ -174,7 +167,6 @@ router.get('/notifs', function (req, res) {
       });
 
     }
-  });
 });
 
 router.get('/disconnect', function (req, res) {

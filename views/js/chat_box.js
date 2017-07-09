@@ -100,7 +100,7 @@ function new_chat(username) {
                }
              );
 
-             var msg =  $('<div class="row msg_container base_sent"> \
+             var msg = $('<div class="row msg_container base_sent"> \
                                <div class="col-md-10 col-xs-10"> \
                                    <div class="messages msg_sent"> \
                                        <p>' + new_chat.find("#btn-input").val() +'</p> \
@@ -154,6 +154,7 @@ $(document).on('click', '.panel-heading span.icon_minim', function (e) {
         $this.removeClass('glyphicon-plus').addClass('glyphicon-minus');
     }
 });
+
 $(document).on('focus', '.panel-footer input.chat_input', function (e) {
     var $this = $(this);
     if ($('#minim_chat_window').hasClass('panel-collapsed')) {
@@ -187,9 +188,35 @@ socket.on('message', function(msg){
   });
 });
 
+
+$("#contacts-dropup").click(function () {
+  if ($("#contacts").length === 1) {
+    $("#contacts").append($('<li><img src="https://pbs.twimg.com/profile_images/505877362873880576/mC7cTyN3.jpeg"></img></li>'));
+  }
+});
+
+$('#contacts-dropup').on('hide.bs.dropdown', function () {
+  $("#contacts").empty();
+});
+
+
 socket.on('notif', function(msg){
   console.log("notif (" + msg + ")");
   $('#notifs_b').css('background-color', 'red');
-
   fillNotifsList();
+});
+
+// OPEN NOTIF DROPDOWN
+$("#notifs_b").click(function () {
+  $('#notifs_b').css('background-color', '');
+  $.post('del_notifs');
+  console.log("LENGTH : ", $("#notifications").length);
+  if ($("#notifications").length === 1) {
+    $("#notifications").append($('<li><span>¯\\_(ツ)_/¯</span></li>'));
+  }
+});
+
+// CLOSE NOTIF DROPDOWN
+$('#notifs-dropup').on('hide.bs.dropdown', function () {
+  $("#notifications").empty();
 });
