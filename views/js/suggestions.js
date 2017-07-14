@@ -1,9 +1,42 @@
-console.log(me);
-console.log(users);
 
 var loc_input = new google.maps.places.Autocomplete(document.getElementById('geoloc'));
 //http://maps.googleapis.com/maps/api/geocode/json?latlng=48.8537,2.549
 //http://ip-api.com/json/62.210.34.252
+
+
+$(function () {
+
+	$("#suggestions").empty();
+
+	$.post('suggestions', {}, function (data) {
+			if (data.users) {
+				data.users.forEach(function (user) {
+					console.log("USER : ", user.username);
+					$("<div>").load("templates/user_mini.html", function() {
+						$(this).find("#panel-title").text(user.firstname + " " + user.lastname);
+						$(this).find("#profile_pic").attr("src", user["picture" + user.profile_pic] ? user["picture" + user.profile_pic] : "img/profile_default.jpg");
+						$(this).find("#panel-heading").click(function () {
+							window.location.href = '/user?username=' + user.username;
+						});
+						$(this).find("#panel-body").click(function () {
+							window.location.href = '/user?username=' + user.username;
+						});
+
+						// LIKE BUTTON
+						if (data.me && data.me.profile_pic && data.me.profile_pic !== "") {
+							var $like_b = $('<a data-original-title="Like" data-toggle="tooltip" type="button" class="like_b btn btn-sm btn-danger"><i class=glyphicon glyphicon-heart"></i></a>');
+							$like_b.click(like(user.username));
+							$(this).find("panel-footer").prepend($like_b);
+						}
+						$(this).find("#block").click(block(user.username));
+						$(this).find("#report").click(report(user.username));
+						$("#suggestions").append($(this));
+					});
+				});
+			}
+		}
+	);
+});
 
 $("#search").click(function () {
 	var place = loc_input.getPlace();
@@ -20,18 +53,41 @@ $("#search").click(function () {
 
 	console.log("SEARCH ", search);
 
-	var url = '/suggestions?' +
-						'age_min='   + encodeURIComponent(search.age_min)   + '&' +
-						'age_max='   + encodeURIComponent(search.age_max)   + '&' +
-						'pop_min='   + encodeURIComponent(search.age_min)   + '&' +
-						'pop_max='   + encodeURIComponent(search.pop_max)   + '&' +
-						'lat='       + encodeURIComponent(search.lat)       + '&' +
-						'lng='       + encodeURIComponent(search.lng)       + '&' +
-						'interests=' + encodeURIComponent(search.interests) + '&' +
-						'sort='      + encodeURIComponent(search.sort);
+	// var url = '/suggestions?' +
+	// 					'age_min='   + encodeURIComponent(search.age_min)   + '&' +
+	// 					'age_max='   + encodeURIComponent(search.age_max)   + '&' +
+	// 					'pop_min='   + encodeURIComponent(search.age_min)   + '&' +
+	// 					'pop_max='   + encodeURIComponent(search.pop_max)   + '&' +
+	// 					'lat='       + encodeURIComponent(search.lat)       + '&' +
+	// 					'lng='       + encodeURIComponent(search.lng)       + '&' +
+	// 					'interests=' + encodeURIComponent(search.interests) + '&' +
+	// 					'sort='      + encodeURIComponent(search.sort);
+		$("#suggestions").empty();
+		$.post('suggestions',
+			{ search: search }, function (data) {
+				if (data.users) {
+					data.users.forEach(function (user) {
+						console.log("USER : ", user.username);
+						$("<div>").load("templates/user_mini.html", function() {
+									console.log("USER_MINI : ", $(this));
+									$(this).find("#panel-title").text(user.firstname + " " + user.lastname);
+						      $("#suggestions").append($(this));
+						});
+					});
+				}
+			}
+		);
 
-	window.location.href = url;
+	//window.location.href = url;
 });
+
+
+
+//
+// $("<div>").load("load.php #posts", function() {
+//       $("#hi").append($(this).find("#posts").html());
+// });
+
 
 function report(username) {
 	$.post('profile',

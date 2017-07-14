@@ -24,7 +24,7 @@ router.get('/user', function (req, res) {
   if (req.session.username) {
 
       if (req.query.username) {
-      	req.db.collection("users").findOneAndUpdate({username: req.query.username}, {$push: {"history": "<a href='/user?username=" + req.session.username + "'>Viewed by " + req.session.username + "</a>"}, $inc: {'popularity': 1} }, {upsert: true, projection:{password: 0, _id: 0}}, function(err, usr) {
+      	req.db.collection("users").findOneAndUpdate({username: req.query.username}, {$push: {"history": "<a href='/user?username=" + req.session.username + "'>Viewed by " + req.session.username + "</a>"}, $inc: {'popularity': 1} }, {/*upsert: true,*/ projection:{password: 0, _id: 0}}, function(err, usr) {
       	  if (usr && usr.value && usr.value.username) {
             console.log("ISONLINE : ", user.isOnline(usr.value.username));
             usr.value.online = user.isOnline(usr.value.username);
@@ -42,8 +42,8 @@ router.get('/user', function (req, res) {
         });
         req.db.collection("users").update(
           { username: req.query.username },
-          { $push: {"notification": message} },
-          { upsert : true }
+          { $push: {"notification": message} }
+          // { upsert : true }
         );
       }
   } else {
@@ -80,18 +80,25 @@ router.get('/suggestions', function (req, res) {
     res.redirect('/');
     return;
   }
-    if (req.query.username) {
+
+  res.render(__dirname + '/../views/templates/suggestions.ejs');
+
+});
+
+router.post('/suggestions', function (req, res) {
+  if (req.session.username) {
+    if (req.body.username) {
       req.db.collection("users").findOne({username: req.query.username}, {password: 0, _id: 0}, function(err, doc) {
         if (doc) {
-          res.render(__dirname + '/../views/templates/suggestions.ejs', {users: [doc]});
-        }
-        else {
-          res.render(__dirname + '/../views/templates/suggestions.ejs');
+          res.json({users: [doc]});
         }
       });
     } else {
       user.loadSuggestions(db, req, res);
     }
+  } else {
+    res.end();
+  }
 });
 
 router.post('/del_notifs', function (req, res) {

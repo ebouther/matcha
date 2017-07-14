@@ -223,7 +223,8 @@ function sortSuggestions (data, req, res) {
       });
       break;
   }
-  res.render(__dirname + '/../views/templates/suggestions.ejs', data);
+  // res.render(__dirname + '/../views/templates/suggestions.ejs', data);
+  res.json(data);
 }
 
 function filterSuggestions (data, req, res) {
@@ -291,14 +292,12 @@ exports.loadSuggestions = function (db, req, res) {
           if (me.gender === "Male") {
             console.log("DBG 1");
               req.db.collection("users").find({gender: "Female", username: {$ne: req.session.username}}, {password: 0, _id: 0}).toArray(function(err, doc) {
-                filterSuggestions({users: doc, me: me});
-                //res.render(__dirname + '/../views/templates/suggestions.ejs', {users: doc, me: me});
+                filterSuggestions({users: doc, me: me}, req, res);
               });
           } else {
             console.log("DBG 2");
             req.db.collection("users").find({gender: "Male", username: {$ne: req.session.username}}, {password: 0, _id: 0}).toArray(function(err, doc) {
-              filterSuggestions({users: doc, me: me});
-              //res.render(__dirname + '/../views/templates/suggestions.ejs', {users: doc, me: me});
+              filterSuggestions({users: doc, me: me}, req, res);
             });
           }
         break;
@@ -306,13 +305,13 @@ exports.loadSuggestions = function (db, req, res) {
           if (me.gender === "Male") {
             console.log("DBG 3");
             req.db.collection("users").find({gender: "Male", username: {$ne: req.session.username}}, {password: 0, _id: 0}).toArray(function(err, doc) {
-              filterSuggestions({users: doc, me: me});
+              filterSuggestions({users: doc, me: me}, req, res);
               //res.render(__dirname + '/../views/templates/suggestions.ejs', {users: doc, me: me});
             });
           } else {
             console.log("DBG 4");
             req.db.collection("users").find({gender: "Female", username: {$ne: req.session.username}}, {password: 0, _id: 0}).toArray(function(err, doc) {
-              filterSuggestions({users: doc, me: me});
+              filterSuggestions({users: doc, me: me}, req, res);
               //res.render(__dirname + '/../views/templates/suggestions.ejs', {users: doc, me: me});
             });
           }

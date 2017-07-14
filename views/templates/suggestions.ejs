@@ -129,9 +129,9 @@
                                 </button>
                               </div>
                           </div>
-
+                          <div id="suggestions"></div>
                           <!-- <div class="row row-eq-height"> -->
-                          <%
+                          <!-- <%
                             if (locals.users)
                               for (var i=0; i < users.length; i++) {
                           %>
@@ -164,7 +164,7 @@
                               </div>
                             </div>
                           </div>
-                          <% } %>
+                          <% } %> -->
                           </div>
                         </div>
                       </div>
@@ -218,10 +218,7 @@
 
 </body>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.1/bootstrap-slider.js"></script>
-<script type='text/javascript' >
-  var users = <%- JSON.stringify(users) %>;
-  var me = <%- JSON.stringify(me) %>;
-</script>
+
 <script type="text/javascript" src="js/suggestions.js"></script>
 <script type="text/javascript" src="js/chat_box.js"></script>
 
