@@ -42,6 +42,23 @@ function getContacts(cb) {
        }
     });
  }
+ function fillContactList () {
+   $("#contacts").empty();
+   getContacts(function (contacts) {
+     contacts.forEach(function (contact) {
+       console.log("CONTACT : " + contact);
+       if (contact)  {
+         var $li = $('<li><a href="#" id="new_chat"><span>' + contact + '</span></a></li>');
+         console.log("OBJ : ");
+         console.log($li);
+         $li.click(function() {
+             new_chat(contact);
+         });
+         $("#contacts").append($li);
+       }
+     });
+   });
+ }
 
  function getNotifs(cb) {
    console.log("getNotifs()");
@@ -122,102 +139,92 @@ function new_chat(username) {
 
 $(function () {
   chat_window = $( "#chat_window_1" ).clone();
-  $( "#chat_window_1" ).remove();
+  $("#chat_window_1").remove();
 
   fillNotifsList();
 
-  getContacts(function (contacts) {
-    contacts.forEach(function (contact) {
-      console.log("CONTACT : " + contact);
-      if (contact)  {
-        var $li = $('<li><a href="#" id="new_chat"><span>' + contact + '</span></a></li>');
-        console.log("OBJ : ");
-        console.log($li);
-        $li.click(function() {
-            new_chat(contact);
-        });
-        $("#contacts").append($li);
+  fillContactList();
+
+  $(document).on('click', '.panel-heading span.icon_minim', function (e) {
+      var $this = $(this);
+      if (!$this.hasClass('panel-collapsed')) {
+          $this.parents('.panel').find('.panel-body').slideUp();
+          $this.addClass('panel-collapsed');
+          $this.removeClass('glyphicon-minus').addClass('glyphicon-plus');
+      } else {
+          $this.parents('.panel').find('.panel-body').slideDown();
+          $this.removeClass('panel-collapsed');
+          $this.removeClass('glyphicon-plus').addClass('glyphicon-minus');
+      }
+  });
+
+  $(document).on('focus', '.panel-footer input.chat_input', function (e) {
+      var $this = $(this);
+      if ($('#minim_chat_window').hasClass('panel-collapsed')) {
+          $this.parents('.panel').find('.panel-body').slideDown();
+          $('#minim_chat_window').removeClass('panel-collapsed');
+          $('#minim_chat_window').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+      }
+  });
+
+  $(document).on('click', '.icon_close', function (e) {
+      $(this).parentsUntil(".chat_container").remove();
+  });
+
+  socket.on('message', function(msg){
+    console.log("RECEIVED MSG");
+    chats.forEach(function(chat) {
+      if (chat.username === msg.from) {
+        var rcv = $('<div class="row msg_container base_receive"> \
+                        <div class="col-md-2 col-xs-2 avatar"> \
+                            <img src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg" class=" img-responsive "> \
+                        </div> \
+                        <div class="col-md-10 col-xs-10"> \
+                            <div class="messages msg_receive"> \
+                                <p>' + msg.message + '</p> \
+                                <time datetime="2009-11-13T20:00">' + msg.from + ' • 51 min</time> \
+                            </div> \
+                        </div> \
+                      </div>');
+        chat.obj.find('#messages').append(rcv);
       }
     });
   });
 
-});
 
-$(document).on('click', '.panel-heading span.icon_minim', function (e) {
-    var $this = $(this);
-    if (!$this.hasClass('panel-collapsed')) {
-        $this.parents('.panel').find('.panel-body').slideUp();
-        $this.addClass('panel-collapsed');
-        $this.removeClass('glyphicon-minus').addClass('glyphicon-plus');
-    } else {
-        $this.parents('.panel').find('.panel-body').slideDown();
-        $this.removeClass('panel-collapsed');
-        $this.removeClass('glyphicon-plus').addClass('glyphicon-minus');
-    }
-});
-
-$(document).on('focus', '.panel-footer input.chat_input', function (e) {
-    var $this = $(this);
-    if ($('#minim_chat_window').hasClass('panel-collapsed')) {
-        $this.parents('.panel').find('.panel-body').slideDown();
-        $('#minim_chat_window').removeClass('panel-collapsed');
-        $('#minim_chat_window').removeClass('glyphicon-plus').addClass('glyphicon-minus');
-    }
-});
-
-$(document).on('click', '.icon_close', function (e) {
-    $(this).parentsUntil(".chat_container").remove();
-});
-
-socket.on('message', function(msg){
-  console.log("RECEIVED MSG");
-  chats.forEach(function(chat) {
-    if (chat.username === msg.from) {
-      var rcv = $('<div class="row msg_container base_receive"> \
-                      <div class="col-md-2 col-xs-2 avatar"> \
-                          <img src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg" class=" img-responsive "> \
-                      </div> \
-                      <div class="col-md-10 col-xs-10"> \
-                          <div class="messages msg_receive"> \
-                              <p>' + msg.message + '</p> \
-                              <time datetime="2009-11-13T20:00">' + msg.from + ' • 51 min</time> \
-                          </div> \
-                      </div> \
-                    </div>');
-      chat.obj.find('#messages').append(rcv);
+  $("#contacts-dropup").click(function () {
+    if ($("#contacts").find("li").length === 0) {
+      $("#contacts").append($('<li><img src="https://pbs.twimg.com/profile_images/505877362873880576/mC7cTyN3.jpeg"></img></li>'));
     }
   });
-});
+
+  // $('#contacts-dropup').on('hide.bs.dropdown', function () {
+  //   $("#contacts").empty();
+  // });
 
 
-$("#contacts-dropup").click(function () {
-  if ($("#contacts").find("li").length === 0) {
-    $("#contacts").append($('<li><img src="https://pbs.twimg.com/profile_images/505877362873880576/mC7cTyN3.jpeg"></img></li>'));
-  }
-});
+  socket.on('notif', function(msg){
+    console.log("notif (" + msg + ")");
+    $('#notifs_b').css('background-color', 'red');
+    fillNotifsList();
+    fillContactList();
+  });
 
-// $('#contacts-dropup').on('hide.bs.dropdown', function () {
-//   $("#contacts").empty();
-// });
+  // OPEN NOTIF DROPDOWN
+  $("#notifs_b").click(function () {
+    $('#notifs_b').css('background-color', '');
+    console.log("LENGTH : ", $("#notifications").length);
+    if ($("#notifications").find("li").length === 0) {
+      $("#notifications").append($('<li><span>¯\\_(ツ)_/¯</span></li>'));
+    } else {
+      $.post('del_notifs');
+    }
+  });
+
+  // CLOSE NOTIF DROPDOWN
+  $('#notifs-dropup').on('hide.bs.dropdown', function () {
+    $("#notifications").empty();
+  });
 
 
-socket.on('notif', function(msg){
-  console.log("notif (" + msg + ")");
-  $('#notifs_b').css('background-color', 'red');
-  fillNotifsList();
-});
-
-// OPEN NOTIF DROPDOWN
-$("#notifs_b").click(function () {
-  $('#notifs_b').css('background-color', '');
-  $.post('del_notifs');
-  console.log("LENGTH : ", $("#notifications").length);
-  if ($("#notifications").find("li").length === 0) {
-    $("#notifications").append($('<li><span>¯\\_(ツ)_/¯</span></li>'));
-  }
-});
-
-// CLOSE NOTIF DROPDOWN
-$('#notifs-dropup').on('hide.bs.dropdown', function () {
-  $("#notifications").empty();
 });
