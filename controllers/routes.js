@@ -51,29 +51,27 @@ router.get('/user', function (req, res) {
   }
 });
 
-router.get('/forgot', function (req, res) {
-  if (!req.body.username)
-    res.redirect('/');
+router.post('/forgot', function (req, res) {
+  if (!req.body.email)
+    return res.redirect('/');
 
-    if (req.query.username) {
-    	req.db.collection("users").findOne({username: req.query.username}, {password: 0, _id: 0},  function(err, usr) {
-    	  if (usr &&  usr.email) {
-          sendmail({
-              from: 'admin@matcha.com',
-              to:  usr.email,
-              subject: 'Matcha - Forgot Password',
-              html: '',
-            }, function(err, reply) {
-              res.render(path.join(__dirname, '/../views/templates/index.ejs'),
-                        {alert: true,
-                        alert_type: "alert-success",
-                        alert_msg: "<strong> Success !</strong> Email sent."});
-          });
-        } else {
-          res.redirect('/');
-        }
-    	});
+	req.db.collection("users").findOne({email: req.body.email}, {password: 0, _id: 0},  function(err, usr) {
+	  if (usr &&  usr.username) {
+      sendmail({
+          from: 'admin@matcha.com',
+          to:  usr.email,
+          subject: 'Matcha - Forgot Password',
+          html: '',
+        }, function(err, reply) {
+          res.render(path.join(__dirname, '/../views/templates/index.ejs'),
+                    {alert: true,
+                    alert_type: "alert-success",
+                    alert_msg: "<strong> Success !</strong> Email sent."});
+      });
+    } else {
+      res.redirect('/');
     }
+	});
 });
 
 router.get('/suggestions', function (req, res) {
@@ -105,7 +103,7 @@ router.post('/del_notifs', function (req, res) {
       { $set: {"notification": []} },
       { upsert : true }
     );
-    
+
   }
 
   res.end();

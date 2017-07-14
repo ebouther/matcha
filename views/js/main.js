@@ -1,6 +1,6 @@
+
 $(document).ready(function() {
 
-  $("#chat").load("templates/chat_box.html");
 
   editProfileField("edit-firstname", "firstname");
   editProfileField("edit-lastname", "lastname");

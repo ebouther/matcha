@@ -196,9 +196,9 @@ $("#contacts-dropup").click(function () {
   }
 });
 
-$('#contacts-dropup').on('hide.bs.dropdown', function () {
-  $("#contacts").empty();
-});
+// $('#contacts-dropup').on('hide.bs.dropdown', function () {
+//   $("#contacts").empty();
+// });
 
 
 socket.on('notif', function(msg){

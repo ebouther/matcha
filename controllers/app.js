@@ -379,9 +379,9 @@ app.post('/profile', function (req, res) {
                     msg = req.body.msg;
                     if (to && from && msg) {
                       var message = {to: to, from: from, message: msg};
-                      users.likeEachOther(from, to, function (like) {
+                      users.likeEachOther(req, from, to, function (like) {
                         if (like === true) {
-                          users.saveMessage(message);
+                          users.saveMessage(req, message);
 
                           req.db.collection("users").findOne(
                             {username: req.body.to}, {}, function (err, user) {
@@ -395,6 +395,7 @@ app.post('/profile', function (req, res) {
                               }
                             });
                           }
+                          res.end();
                         });
                       }
                     });
@@ -404,7 +405,7 @@ app.post('/profile', function (req, res) {
                       msg = req.query.msg;
 
                       console.log("GET MESSAGES WITH " + user);
-                      users.getMessages(req.session.username, user, function(messages) {
+                      users.getMessages(req, req.session.username, user, function(messages) {
                         console.log("MESSAGES : ", messages);
                         res.json(messages);
                       });

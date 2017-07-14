@@ -10,12 +10,6 @@
     <script src="http://bootstrap-tagsinput.github.io/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js"></script>
     <script type="text/javascript" src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 
-    <script>
-    $(function(){
-      $("#chat").load("templates/chat_box.html");
-    });
-    </script>
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="http://bootstrap-tagsinput.github.io/bootstrap-tagsinput/dist/bootstrap-tagsinput.css">
 
@@ -229,4 +223,8 @@
   var me = <%- JSON.stringify(me) %>;
 </script>
 <script type="text/javascript" src="js/suggestions.js"></script>
+
+<script>$("#chat").load("templates/chat_box.html")</script>
+<script type="text/javascript" src="js/chat_box.js"></script>
+
 </html>

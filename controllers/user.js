@@ -49,7 +49,7 @@ exports.saveIpLocation = function (db, req, res) {
   });
 }
 
-exports.getMessages = function (user1, user2, cb) {
+exports.getMessages = function (req, user1, user2, cb) {
   mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
     assert.equal(null, err);
     assert.ok(db != null);
@@ -68,7 +68,7 @@ exports.getMessages = function (user1, user2, cb) {
   });
 }
 
-exports.saveMessage = function (message) {
+exports.saveMessage = function (req, message) {
   mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
     assert.equal(null, err);
     assert.ok(db != null);
@@ -113,7 +113,7 @@ exports.isOnline = function (username) {
   });
 }
 
-exports.likeEachOther = function (username1, username2, cb) {
+exports.likeEachOther = function (req, username1, username2, cb) {
   mongodb.MongoClient.connect("mongodb://localhost:27017/matcha", function(err, db) {
     assert.equal(null, err);
     assert.ok(db != null);

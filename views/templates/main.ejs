@@ -75,13 +75,13 @@
                                           <%= locals.picture1 ? picture1 : 'img/profile_default.jpg' %>
                                           <%  break; %>
                                           <% case '2': %>
-                                          <%= locals.picture2 ? picture0 : 'img/profile_default.jpg' %>
+                                          <%= locals.picture2 ? picture2 : 'img/profile_default.jpg' %>
                                           <%  break; %>
                                           <% case '3': %>
-                                          <%= locals.picture3 ? picture0 : 'img/profile_default.jpg' %>
+                                          <%= locals.picture3 ? picture3 : 'img/profile_default.jpg' %>
                                           <%  break; %>
                                           <% case '4': %>
-                                          <%= locals.picture4 ? picture0 : 'img/profile_default.jpg' %>
+                                          <%= locals.picture4 ? picture4 : 'img/profile_default.jpg' %>
                                           <%  break; %>
                                           <% default: %>
                                             img/profile_default.jpg
@@ -307,4 +307,6 @@
 
 </body>
   <script type="text/javascript" src="js/main.js"></script>
+  <script>$("#chat").load("templates/chat_box.html")</script>
+  <script type="text/javascript" src="js/chat_box.js"></script>
 </html>
