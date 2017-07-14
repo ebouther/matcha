@@ -6,6 +6,29 @@ var request = require('request');
 
 var io = require('./app').io;
 
+var nodemailer = require('nodemailer');
+
+
+exports.sendMail = function (req, username, token, cb) {
+	var smtpTransport = nodemailer.createTransport({
+		host: 'smtp.gmail.com',
+		secure: false,
+		auth: {
+			user: "matchaconfirm@gmail.com",
+			pass: "Matchaaa"
+		}
+	});
+	var mailOptions = {
+		to: req.body.email,
+		subject: 'Matcha - Forgot Password',
+		html: "Hi " + username + ", here's a link to reset your password: <br /><a href=\"http://" + req.headers.host + "/reset?token=" + token + "\">"
+	}
+	smtpTransport.sendMail(mailOptions, function(err, res) {
+    cb(err, res)
+	});
+}
+
+
 function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
   var R = 6371;
   var dLat = deg2rad(lat2-lat1);

@@ -3,12 +3,13 @@ var router = express.Router();
 
 var io = require('./app').io;
 
-var mongodb = require('mongodb'); //should be only present in models :/
+var mongodb = require('mongodb');
 var db = require('./app').db;
 
 var path = require('path');
 var assert = require('assert');
-var sendmail = require('sendmail')();
+
+var crypto  = require('crypto');
 
 var user = require("./user");
 
@@ -53,23 +54,44 @@ router.get('/user', function (req, res) {
 
 router.post('/forgot', function (req, res) {
   if (!req.body.email)
-    return res.redirect('/');
+    res.redirect('/');
 
-	req.db.collection("users").findOne({email: req.body.email}, {password: 0, _id: 0},  function(err, usr) {
-	  if (usr &&  usr.username) {
-      sendmail({
-          from: 'admin@matcha.com',
-          to:  usr.email,
-          subject: 'Matcha - Forgot Password',
-          html: '',
-        }, function(err, reply) {
-          res.render(path.join(__dirname, '/../views/templates/index.ejs'),
+    var _res = res;
+
+    if (req.body.email) {
+    	req.db.collection("users").findOne({email: req.body.email}, {password: 0, _id: 0},  function(err, usr) {
+    	  if (usr &&  usr.username) {
+          var token = crypto.randomBytes(64).toString('hex');
+
+          req.db.collection("users").update({"email" : req.body.email},
+            {$set: {pwdToken: token}}, function (err, res) {
+
+              user.sendMail(req, usr.username, token, function (error, result) {
+                if (error) {
+                  return _res.render(path.join(__dirname, '/../views/templates/index.ejs'),
+                            {alert: true,
+                            alert_type: "alert-danger",
+                            alert_msg: "<strong> Error !</strong> Mail error: " + error});
+                }
+                return _res.render(path.join(__dirname, '/../views/templates/index.ejs'),
+                        {alert: true,
+                        alert_type: "alert-success",
+                        alert_msg: "<strong> Success !</strong> Mail sent."});
+              });
+            });
+
+        } else {
+          return _res.render(path.join(__dirname, '/../views/templates/index.ejs'),
                     {alert: true,
-                    alert_type: "alert-success",
-                    alert_msg: "<strong> Success !</strong> Email sent."});
-      });
+                    alert_type: "alert-danger",
+                    alert_msg: "<strong> Error !</strong> User not found."});
+        }
+    	});
     } else {
-      res.redirect('/');
+      return _res.render(path.join(__dirname, '/../views/templates/index.ejs'),
+          {alert: true,
+          alert_type: "alert-danger",
+          alert_msg: "<strong> Error !</strong> Enter username."});
     }
 	});
 });
