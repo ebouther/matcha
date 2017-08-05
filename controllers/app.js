@@ -11,6 +11,8 @@ var assert = require('assert');
 // -------         INCLUDES          -------- //
 var mongodb = require('mongodb');
 
+var user_funct = require('./user');
+
 var _db;
 
 app.all('*', function(req, res, next)
@@ -325,12 +327,9 @@ app.post('/profile', function (req, res) {
               alert_type: "alert-warning",
               alert_msg: "<strong>Warning !</strong> Password confirmation and password are different."});
               return;
-            }
+          }
 
-            if (pass < 6
-              || !/[a-z]/.test(pass)
-              || !/[A-Z]/.test(pass)
-              || !/[0-9]/.test(pass)) {
+            if (user_funct.securePass(pass)) {
                 res.render(__dirname + '/../views/templates/index.ejs',
                 {alert: true,
                   alert_type: "alert-warning",
