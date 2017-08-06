@@ -137,7 +137,7 @@ function new_chat(username) {
      }
   }
 
-$(function () {
+function initChat() {
   chat_window = $( "#chat_window_1" ).clone();
   $("#chat_window_1").remove();
 
@@ -193,6 +193,7 @@ $(function () {
 
 
   $("#contacts-dropup").click(function () {
+    console.log("LENGTH : " + $("#contacts").find("li").length);
     if ($("#contacts").find("li").length === 0) {
       $("#contacts").append($('<li><img src="https://pbs.twimg.com/profile_images/505877362873880576/mC7cTyN3.jpeg"></img></li>'));
     }
@@ -226,5 +227,4 @@ $(function () {
     $("#notifications").empty();
   });
 
-
-});
+}
