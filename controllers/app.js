@@ -106,8 +106,7 @@ app.post('/login', function (req, res) {
 
         req.db.collection("users").update(
           {username: req.session.username},
-          {$set: {last_log: new Date()}},
-          { upsert : true }
+          {$set: {last_log: new Date()}}
         );
 
         if (!doc.location || doc.location === "") {
@@ -126,50 +125,43 @@ app.post('/profile', function (req, res) {
     case "email":
     req.db.collection("users").update(
       {username: req.session.username},
-      {$set: {email: req.body.content}},
-      { upsert : true }
+      {$set: {email: req.body.content}}
     );
     break;
     case "biography":
     req.db.collection("users").update(
       {username: req.session.username},
-      {$set: {biography: req.body.content}},
-      { upsert : true }
+      {$set: {biography: req.body.content}}
     );
     break;
     case "gender":
     req.db.collection("users").update(
       {username: req.session.username},
-      {$set: {gender: req.body.content}},
-      { upsert : true }
+      {$set: {gender: req.body.content}}
     );
     break;
     case "sex_pref":
     req.db.collection("users").update(
       {username: req.session.username},
-      {$set: {sex_pref: req.body.content}},
-      { upsert : true }
+      {$set: {sex_pref: req.body.content}}
     );
     break;
     case "interests":
     req.db.collection("users").update(
       {username: req.session.username},
-      {$set: {interests: req.body.content}},
-      { upsert : true }
+      {$set: {interests: req.body.content}}
     );
     break;
     case "firstname":
     req.db.collection("users").update(
       {username: req.session.username},
-      {$set: {firstname: req.body.content}},
-      { upsert : true }
+      {$set: {firstname: req.body.content}}
     );
     break;
     case "lastname":
     req.db.collection("users").update(
       {username: req.session.username},
-      {$set: {lastname: req.body.content}},
-      { upsert : true }
+      {$set: {lastname: req.body.content}}
     );
     break;
     case "age":
@@ -178,8 +170,7 @@ app.post('/profile', function (req, res) {
     else
     req.db.collection("users").update(
       {username: req.session.username},
-      {$set: {age: req.body.content}},
-      { upsert : true }
+      {$set: {age: req.body.content}}
     );
     break;
     case "picture":
@@ -189,29 +180,25 @@ app.post('/profile', function (req, res) {
 
     req.db.collection("users").update(
       {username: req.session.username},
-      {$set: obj},
-      { upsert : true }
+      {$set: obj}
     );
     break;
     case "profile_pic":
     req.db.collection("users").update(
       {username: req.session.username},
-      {$set: {profile_pic: req.body.content}},
-      { upsert : true }
+      {$set: {profile_pic: req.body.content}}
     );
     break;
     case "location":
     req.db.collection("users").update(
       {username: req.session.username},
-      {$set: {location: req.body.content}},
-      { upsert : true }
+      {$set: {location: req.body.content}}
     );
     break;
     case "lat_lng":
     req.db.collection("users").update(
       {username: req.session.username},
-      {$set: {lat_lng: req.body.content}},
-      { upsert : true }
+      {$set: {lat_lng: req.body.content}}
     );
     break;
     case "like":
@@ -239,16 +226,14 @@ app.post('/profile', function (req, res) {
             });
             req.db.collection("users").update(
               { username: req.body.content },
-              { $push: {"notification": message} },
-              { upsert : true }
+              { $push: {"notification": message} }
             );
 
           } else {
 
             req.db.collection("users").update(
               {username: req.session.username},
-              {$push: {like: req.body.content}},
-              { upsert : true }
+              {$push: {like: req.body.content}}
             );
 
             req.db.collection("users").findOne(
@@ -273,8 +258,7 @@ app.post('/profile', function (req, res) {
                     {username: req.body.content},
                     {$push: {"history": "<a href='/user?username=" + req.session.username + "'>Liked by " + req.session.username + "</a>"},
                     $push: {"notification": message},
-                    $inc: {'popularity': 2}},
-                    { upsert : true }
+                    $inc: {'popularity': 2}}
                   );
 
                 });
@@ -283,32 +267,50 @@ app.post('/profile', function (req, res) {
             });
             break;
             case "block":
-            req.db.collection("users").update(
-              {username: req.session.username},
-              {$push: {block: req.body.content}},
-              { upsert : true }
-            );
+              if (req.body.content) {
+                req.db.collection("users").findOne(
+                  {username: req.session.username}, {}, function (err, user) {
+                    if (user) {
+                      if (!user.block || user.block.indexOf(req.body.content) === -1) {
+                          req.db.collection("users").update(
+                            {username: req.session.username},
+                            {$push: {block: req.body.content}}
+                          );
+                      } else {
+                        req.db.collection("users").update(
+                          {username: req.session.username},
+                          {$pull: {block: req.body.content}}
+                        );
+                      }
+                    }
+                  });
+              }
             break;
+
             case "report":
+            console.log("---------  REPORT");
             req.db.collection("users").findOne(
               {username: req.body.content}, {}, function (err, user) {
-                if (user && user.report && user.report.indexOf(req.session) == -1) {
+                if (user) {
 
-                  if (user.report.length > 3)  {
-                    req.db.collection("users").RemoveOne( {username: req.body.content} );
-
+                  if (!user.report || user.report.indexOf(req.session.username) === -1) {
+                    if (user.report && user.report.length >= 3)  {
+                      req.db.collection("users").deleteOne( {username: req.body.content} );
+                    } else {
+                      req.db.collection("users").update(
+                        {username: req.body.content},
+                        {$push: {report: req.session.username}}
+                      );
+                    }
                   } else {
-
-                    req.db.collection("users").Update(
+                    req.db.collection("users").update(
                       {username: req.body.content},
-                      {$push: {report: req.session.username}},
-                      { upsert : true }
+                      {$pull: {report: req.session.username}}
                     );
-
                   }
+
                 }
-              }
-            );
+              });
 
             break;
           }

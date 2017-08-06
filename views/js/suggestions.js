@@ -9,6 +9,8 @@ function appendSuggestion(data) {
 		data.users.forEach(function (user) {
 			console.log("USER : ", user.username);
 			$("<div>").load("templates/user_mini.html", function() {
+				var _this = $(this);
+
 				$(this).find("#panel-title").text(user.firstname + " " + user.lastname);
 				$(this).find("#profile_pic").attr("src", user["picture" + user.profile_pic] ? user["picture" + user.profile_pic] : "img/profile_default.jpg");
 				$(this).find("#panel-heading").click(function () {
@@ -21,14 +23,44 @@ function appendSuggestion(data) {
 				// LIKE BUTTON
 				if (data.me && data.me.profile_pic && data.me.profile_pic !== "") {
 					var $like_b = $('<a data-original-title="Like" data-toggle="tooltip" type="button" class="like_b btn btn-sm btn-danger"><i class="glyphicon glyphicon-heart"></i></a>');
-					var _this = $(this);
+
+					// => Init color
+					if (data.me.like.indexOf(user.username) !== -1) {
+						$like_b.css("background-color", "white");
+						$like_b.children().css("color", "red");
+					}
+					// => on click
 					$like_b.click(function() {
 						like(user.username, _this);
 					});
+
+					// => append like button
 					$(this).find("#panel-footer").prepend($like_b);
+
 				}
-				$(this).find("#block").click(block(user.username));
-				$(this).find("#report").click(report(user.username));
+
+
+				console.log(data);
+				// BLOCK BUTTON
+				$(this).find("#block").click(function () {
+					block(user.username, _this);
+				});
+				//    => Init color
+				if (data.me.block && data.me.block.indexOf(user.username) !== -1) {
+					$(this).find("#block").css("background-color", "white");
+					$(this).find("#block").children().css("color", "orange");
+				}
+
+				// REPORT BUTTON
+				$(this).find("#report").click(function () {
+					report(user.username, _this);
+				});
+				//    => Init color
+				if (user.report && user.report.indexOf(data.me.username) !== -1) {
+					$(this).find("#report").css("background-color", "white");
+					$(this).find("#report").children().css("color", "red");
+				}
+
 				$("#suggestions").append($(this));
 			});
 		});
@@ -86,22 +118,42 @@ $("#search").click(function () {
 // });
 
 
-function report(username) {
+function report(username, user_blk) {
 	$.post('profile',
 		{
 				field: "report",
 				content: username
 		}
 	);
+	var $block_b = user_blk.find("#report");
+
+	if ($block_b.css("background-color") === "rgb(255, 255, 255)") {
+		$block_b.css("background-color", "red");
+		$block_b.children().css("color", "white");
+	} else {
+		$block_b.css("background-color", "white");
+		$block_b.children().css("color", "red");
+	}
 }
 
-function block(username) {
+function block(username, user_blk) {
 	$.post('profile',
 		{
 				field: "block",
 				content: username
 		}
 	);
+
+
+	var $block_b = user_blk.find("#block");
+
+	if ($block_b.css("background-color") === "rgb(255, 255, 255)") {
+		$block_b.css("background-color", "orange");
+		$block_b.children().css("color", "white");
+	} else {
+		$block_b.css("background-color", "white");
+		$block_b.children().css("color", "orange");
+	}
 }
 
 
@@ -113,7 +165,7 @@ function like(username, user_blk) {
 		}
 	);
 	var $like_b = user_blk.find(".like_b");
-	console.log("LIKE_B : ", $like_b);
+
 	if ($like_b.css("background-color") === "rgb(255, 255, 255)") {
 		$like_b.css("background-color", "red");
 		$like_b.children().css("color", "white");
@@ -151,30 +203,3 @@ $('input#search_by_tag').on('itemAdded', function(event) {
 			}
 		);
 	});
-
-
-function reloadButtons() {
-	$(".chat_b").each(function(){
-		var username = $(this).attr('id');
-		if (me && me.like && me.like.indexOf(username) !== -1) {
-			if ((user = (users.find( function(user){return user.username === username} )))
-					&& user.like && user.like.indexOf(me.username) !== -1)
-				return;
-		}
-		$(this).css("display", "none");
-	});
-
-	$(".like_b").each(function(){
-		if (!me.profile_pic || me.profile_pic === "") {
-			console.log("disable button");
-			$(this).disable();
-		}
-
-		if (me.like.indexOf($(this).attr('id')) !== -1) {
-			$(this).css("background-color", "white");
-			$(this).children().css("color", "red");
-		}
-	});
-}
-
-reloadButtons();
