@@ -20,9 +20,12 @@ function appendSuggestion(data) {
 
 				// LIKE BUTTON
 				if (data.me && data.me.profile_pic && data.me.profile_pic !== "") {
-					var $like_b = $('<a data-original-title="Like" data-toggle="tooltip" type="button" class="like_b btn btn-sm btn-danger"><i class=glyphicon glyphicon-heart"></i></a>');
-					$like_b.click(like(user.username));
-					$(this).find("panel-footer").prepend($like_b);
+					var $like_b = $('<a data-original-title="Like" data-toggle="tooltip" type="button" class="like_b btn btn-sm btn-danger"><i class="glyphicon glyphicon-heart"></i></a>');
+					var _this = $(this);
+					$like_b.click(function() {
+						like(user.username, _this);
+					});
+					$(this).find("#panel-footer").prepend($like_b);
 				}
 				$(this).find("#block").click(block(user.username));
 				$(this).find("#report").click(report(user.username));
@@ -102,25 +105,22 @@ function block(username) {
 }
 
 
-function like(username) {
+function like(username, user_blk) {
 	$.post('profile',
 		{
 				field: "like",
 				content: username
 		}
 	);
-	$(".like_b").each(function(){
-		if ($(this).attr('id') === username) {
-			console.log($(this).css("background-color"));
-			if ($(this).css("background-color") === "rgb(255, 255, 255)") {
-				$(this).css("background-color", "red");
-				$(this).children().css("color", "white");
-			} else {
-				$(this).css("background-color", "white");
-				$(this).children().css("color", "red");
-			}
-		}
-	});
+	var $like_b = user_blk.find(".like_b");
+	console.log("LIKE_B : ", $like_b);
+	if ($like_b.css("background-color") === "rgb(255, 255, 255)") {
+		$like_b.css("background-color", "red");
+		$like_b.children().css("color", "white");
+	} else {
+		$like_b.css("background-color", "white");
+		$like_b.children().css("color", "red");
+	}
 }
 
 $('#ex1').slider({
