@@ -329,7 +329,7 @@ app.post('/profile', function (req, res) {
               return;
           }
 
-            if (user_funct.securePass(pass)) {
+            if (!user_funct.securePass(pass)) {
                 res.render(__dirname + '/../views/templates/index.ejs',
                 {alert: true,
                   alert_type: "alert-warning",
