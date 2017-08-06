@@ -33,7 +33,7 @@ exports.sendMail = function (req, username, token, cb) {
 	var mailOptions = {
 		to: req.body.email,
 		subject: 'Matcha - Forgot Password',
-		html: "Hi " + username + ", here's a link to reset your password: <br /><a href=\"http://" + req.headers.host + "/reset?token=" + token + "\">"
+		html: "Hi " + username + ", here's a " + "<a href=\"http://" + req.headers.host + "/reset?token=" + token + "\">link</a>" + " to reset your matcha password."
 	}
 	transporter.sendMail(mailOptions, function(err, res) {
     cb(err, res)
