@@ -178,8 +178,8 @@ exports.loadProfile = function (req, res) {
 }
 
 function sortSuggestions (data, req, res) {
-  console.log("SORT : ", req.query.sort);
-  switch (req.query.sort) {
+	if (req.body.search && req.body.search.sort)
+  switch (req.body.search.sort) {
 
     case "age":
       console.log("SORT BY AGE");
@@ -263,32 +263,40 @@ function sortSuggestions (data, req, res) {
 }
 
 function filterSuggestions (data, req, res) {
-  var interests = req.query.interests ? req.query.interests.split(",") : [];
+  var interests = req.body.interests ? req.body.interests.split(",") : [];
+	var search = req.body.search;
 
-  console.log("QUERIES : ", req.query);
+
+
+	// console.log("POST : ", req.body);
+	// console.log("USERS : ", data.users);
+	// console.log("SEARCH : ", search);
+
+	if (search)
   data.users.forEach(function (user, i) {
-      if (req.query.age_min && req.query.age_min !== ""
-          && (!user.age || user.age < req.query.age_min))
+
+      if (search.age_min && search.age_min !== ""
+          && (!user.age || user.age < search.age_min))
       {
         console.log("TOO YOUNG - REMOVE USER : ", i);
         data.users.splice(i, 1);
       }
-      if (req.query.age_max && !isNaN(req.query.age_max)
-          && (!user.age || user.age > parseInt(req.query.age_max)))
+      if (search.age_max && !isNaN(search.age_max)
+          && (!user.age || user.age > parseInt(search.age_max)))
       {
         console.log("TOO OLD - REMOVE USER : ", user.username);
         data.users.splice(i, 1);
       }
 
-      if (req.query.pop_min && req.query.pop_min !== ""
-          && (!user.pop || user.pop < req.query.pop_min))
+      if (search.pop_min && search.pop_min !== ""
+          && (!user.pop || user.pop < search.pop_min))
       {
         console.log("NOT ENOUGH POP - REMOVE USER : ", user.username);
         data.users.splice(i, 1);
       }
 
-      if (req.query.pop_max && req.query.pop_max !== ""
-          && (!user.pop || user.pop > req.query.pop_max))
+      if (search.pop_max && search.pop_max !== ""
+          && (!user.pop || user.pop > search.pop_max))
       {
         console.log("TOO POP - REMOVE USER : ", user.username);
         data.users.splice(i, 1);
@@ -308,9 +316,9 @@ function filterSuggestions (data, req, res) {
         data.users.splice(i, 1);
       }
 
-      if (req.query.lat && req.query.lng
-          && req.query.lat !== "" && req.query.lng !== ""
-          && (!user.lat_lng || req.query.lat !== user.lat_lng[0] || req.query.lng !== user.lat_lng[1]))
+      if (search.lat && search.lng
+          && search.lat !== "" && search.lng !== ""
+          && (!user.lat_lng || search.lat !== user.lat_lng[0] || search.lng !== user.lat_lng[1]))
       {
         console.log("MISSING LOCATION - REMOVE USER : ", user.username);
         data.users.splice(i, 1);
