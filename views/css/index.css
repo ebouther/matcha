@@ -140,3 +140,25 @@ body {
 	background-color: #53A3CD;
 	border-color: #53A3CD;
 }
+
+.box_oauth {
+	vertical-align: middle;
+	display: inline-block;
+}
+
+.b_oauth {
+	display: inline-block;
+	margin: 1px;
+	padding: 10px;
+}
+
+.b_oauth:hover {
+    background-color: #5bc0de;
+		border: 1px solid #ddd;
+		margin: 0px;
+}
+
+.b_oauth > img {
+	height: 40px;
+	width: 40px;
+}

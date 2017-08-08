@@ -34,9 +34,7 @@ app.all('*', function(req, res, next)
 });
 
 
-
-
-var db = module.exports.db;
+// var db = module.exports.db;
 
 // ------------------------------------------ //
 
@@ -77,6 +75,8 @@ console.log(__dirname + '/../public');
 var users = require("./user");
 
 app.use('/', require("./routes"));
+
+require('./auth.js')(app);
 
 // ------------------------------------------ //
 
@@ -424,6 +424,6 @@ app.post('/profile', function (req, res) {
                     //   });
                     // });
 
-                    http.listen(3000, function () {
-                      console.log('Example app listening on port 3000!');
+                    http.listen(8080, function () {
+                      console.log('Example app listening on port 8080!');
                     });

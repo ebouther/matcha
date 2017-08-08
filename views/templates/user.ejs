@@ -194,10 +194,10 @@
 
                             <div class="panel-footer">
                               <!-- <a data-original-title="Chat" data-toggle="tooltip" type="button" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-envelope"></i></a> -->
-                              <a data-original-title="Like" data-toggle="tooltip" type="button" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-heart"></i></a>
+                              <!-- <a data-original-title="Like" data-toggle="tooltip" type="button" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-heart"></i></a>
                               <span class="pull-right">
                                 <a data-original-title="Report" data-toggle="tooltip" type="button" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-remove"></i></a>
-                              </span>
+                              </span> -->
                             </div>
                           </div>
                         </div>
@@ -236,6 +236,8 @@
             </div>
         </div>
 
+        <div id="chat"></div>
+
         <hr>
 
         <footer>
@@ -251,4 +253,6 @@
 </body>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.1/bootstrap-slider.js"></script>
 <script type="text/javascript" src="js/user.js"></script>
+<script type="text/javascript" src="js/chat_box.js"></script>
+<script>$("#chat").load("templates/chat_box.html", function () {initChat()})</script>
 </html>
