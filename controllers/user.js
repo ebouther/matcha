@@ -17,14 +17,7 @@ exports.securePass = function(pass) {
 }
 
 exports.sendMail = function (req, username, token, cb) {
-	// var smtpTransport = nodemailer.createTransport({
-	// 	host: 'smtp.gmail.com',
-	// 	secure: false,
-	// 	auth: {
-	// 		user: "matchaconfirm@gmail.com",
-	// 		pass: "Matchaaa"
-	// 	}
-	// });
+
 		let transporter = nodemailer.createTransport({
 	    sendmail: true,
 	    newline: 'unix',
@@ -72,7 +65,7 @@ exports.saveIpLocation = function (db, req, res) {
   request(options, function(err, result, body) {
     if (!err) {
       console.log("LAT LNG BODY : ", body);
-      if (body.lat && body.lon) {
+      if (body.status === "success" && body.lat && body.lon) {
         req.db.collection("users").update(
           { username: req.session.username },
           { $set: {ip_lat_lng: [body.lat, body.lon]} },
