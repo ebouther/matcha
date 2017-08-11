@@ -111,7 +111,7 @@ app.post('/login', function (req, res) {
 
         if (!doc.location || doc.location === "") {
           console.log("NO LOCATION SAVED : ", doc);
-          users.saveIpLocation(db, req, res);
+          users.saveIpLocation(req.db, req, res);
         } else {
           res.redirect('/');
         }

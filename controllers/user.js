@@ -175,7 +175,11 @@ function distanceBetween(a, b)
 	var a_lat_lng = a.lat_lng ? a.lat_lng : a.ip_lat_lng;
 	var b_lat_lng = b.lat_lng ? b.lat_lng : b.ip_lat_lng;
 
-	return getDistanceFromLatLonInKm(a_lat_lng[0], a_lat_lng[1], b_lat_lng[0], b_lat_lng[1]);
+	if (!a_lat_lng || !b_lat_lng)
+		return 20033; //earth circonference : 40075
+	else
+		return getDistanceFromLatLonInKm(a_lat_lng[0], a_lat_lng[1], b_lat_lng[0], b_lat_lng[1]);
+
 }
 
 function commonTags(me, b) {
@@ -190,18 +194,57 @@ function commonTags(me, b) {
 	return common_int;
 }
 
+function sortWeight(a, max) {
+	// console.log("DIST_INV : " + (max.dist_inv ? (a.dist_from_me ? 1 / a.dist_from_me : 1) / max.dist_inv : 0) * 100)
+	// console.log("COMMON TAGS : " + (max.commonTags ? a.commonTags / max.commonTags : 0) * 100)
+	// console.log("POPULARITY : " + (max.popularity ? a.popularity / max.popularity : 0) * 100)
+	//
+	// console.log("WEIGHT : ", 						((max.dist_inv ? ((a.dist_from_me ? 1 / a.dist_from_me : 1)) / max.dist_inv : 0) * 100
+	// 																		+ (max.commonTags ? a.commonTags / max.commonTags : 0) * 100
+	// 																		+ (max.popularity ? a.popularity / max.popularity : 0) * 100)
+	// 																		/ 3);
+	if (!a.popularity)
+		a.popularity = 0;
+
+	return (
+						((max.dist_inv ? ((a.dist_from_me ? 1 / a.dist_from_me : 1)) / max.dist_inv : 0) * 100
+						+ (max.commonTags ? a.commonTags / max.commonTags : 0) * 100
+						+ (max.popularity ? a.popularity / max.popularity : 0) * 100)
+						/ 3
+				 );
+}
+
 function weightedSort(data, req, res) {
+	var max = {
+		dist_inv   : 0,
+		commonTags : 0,
+		popularity : 0
+	};
+
 	data.users.forEach(function (user) {
-		user.sort_weight = (distanceBetween(data.me, user) + commonTags(data.me, user) + user.popularity);
+		user.dist_from_me = distanceBetween(data.me, user);
+		user.commonTags = commonTags(data.me, user);
+
+		if (user.commonTags > max.commonTags)
+			max.commonTags = user.commonTags;
+		if (user.popularity > max.popularity)
+			max.popularity = user.popularity;
+		if (user.dist_from_me ? 1 / user.dist_from_me : 1 > max.dist_inv)
+			max.dist_inv = user.dist_from_me ? 1 / user.dist_from_me : 1;
 	});
+
 	data.users.sort(function (a, b) {
+
+		a.sort_weight = sortWeight(a, max);
+		b.sort_weight = sortWeight(b, max);
+
 		if (!a.sort_weight && !b.sort_weight)
 			return 0;
-		else if (!a.sort_weight)
-			return -1;
 		else if (!b.sort_weight)
+			return -1;
+		else if (!a.sort_weight)
 			return 1;
-		return (a.sort_weight - b.sort_weight);
+		return (b.sort_weight - a.sort_weight);
 	});
 	res.json(data);
 }

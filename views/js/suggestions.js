@@ -40,7 +40,7 @@ function appendSuggestion(data) {
 				}
 
 
-				console.log(data);
+				console.log(user);
 				// BLOCK BUTTON
 				$(this).find("#block").click(function () {
 					block(user.username, _this);
