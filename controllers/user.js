@@ -170,8 +170,44 @@ exports.loadProfile = function (req, res) {
   });
 }
 
+function distanceBetween(a, b)
+{
+	var a_lat_lng = a.lat_lng ? a.lat_lng : a.ip_lat_lng;
+	var b_lat_lng = b.lat_lng ? b.lat_lng : b.ip_lat_lng;
+
+	return getDistanceFromLatLonInKm(a_lat_lng[0], a_lat_lng[1], b_lat_lng[0], b_lat_lng[1]);
+}
+
+function commonTags(me, b) {
+	var me_interests = me.interests ? me.interests.split(",") : [];
+	var b_interests = b.interests ? b.interests.split(",") : [];
+	var common_int = 0;
+
+	me_interests.forEach(function (interest) {
+		if (b_interests.indexOf(interest) !== -1)
+			common_int++;
+	});
+	return common_int;
+}
+
+function weightedSort(data, req, res) {
+	data.users.forEach(function (user) {
+		user.sort_weight = (distanceBetween(data.me, user) + commonTags(data.me, user) + user.popularity);
+	});
+	data.users.sort(function (a, b) {
+		if (!a.sort_weight && !b.sort_weight)
+			return 0;
+		else if (!a.sort_weight)
+			return -1;
+		else if (!b.sort_weight)
+			return 1;
+		return (a.sort_weight - b.sort_weight);
+	});
+	res.json(data);
+}
+
 function sortSuggestions (data, req, res) {
-	if (req.body.search && req.body.search.sort)
+
   switch (req.body.search.sort) {
 
     case "age":
@@ -318,7 +354,11 @@ function filterSuggestions (data, req, res) {
       }
 
   });
-  sortSuggestions(data, req, res);
+		if (req.body.search && req.body.search.sort) {
+  		sortSuggestions(data, req, res);
+		} else {
+			weightedSort(data, req, res);
+		}
 }
 
 exports.loadSuggestions = function (db, req, res) {
