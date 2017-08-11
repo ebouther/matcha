@@ -189,7 +189,19 @@ app.post('/profile', function (req, res) {
       {$set: {profile_pic: req.body.content}}
     );
     break;
+    case "getNavLoc":
+    console.log("NAV LOCATION");
+    req.db.collection("users").findOne(
+      {username: req.session.username}, function(err, user) {
+        console.log("USER : ", user);
+        if (user && user.lat_lng)
+          res.json({msg: 0});
+        else
+          res.json({msg: 1});
+      });
+    break;
     case "location":
+    console.log("LOCATION");
     req.db.collection("users").update(
       {username: req.session.username},
       {$set: {location: req.body.content}}

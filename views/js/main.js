@@ -1,6 +1,31 @@
 
 $(document).ready(function() {
 
+  $.ajax({
+       url: '/profile',
+       type: 'post',
+       dataType: 'json',
+       data: {field: "getNavLoc"},
+       success: function(res) {
+         console.log("RES : ", res);
+         if (res.msg === 1)
+         {
+           navigator.geolocation.getCurrentPosition(function(pos) {
+             console.log("GET LOCATION");
+             var lat = pos.coords.latitude;
+             var lng = pos.coords.longitude;
+
+             $.post('profile',
+               {
+                   field: "lat_lng",
+                   content: [lat, lng]
+               }
+             );
+           });
+         }
+       }
+    });
+
 
   editProfileField("edit-firstname", "firstname");
   editProfileField("edit-lastname", "lastname");
