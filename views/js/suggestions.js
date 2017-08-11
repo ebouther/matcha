@@ -7,12 +7,15 @@ var loc_input = new google.maps.places.Autocomplete(document.getElementById('geo
 function appendSuggestion(data) {
 	if (data.users) {
 		data.users.forEach(function (user) {
-			console.log("USER : ", user.username);
+			console.log("USER : ", user);
+
 			$("<div>").load("templates/user_mini.html", function() {
 				var _this = $(this);
 
 				$(this).find("#panel-title").text(user.firstname + " " + user.lastname);
 				$(this).find("#profile_pic").attr("src", user["picture" + user.profile_pic] ? user["picture" + user.profile_pic] : "img/profile_default.jpg");
+				$(this).find("#affinity").text(Math.round(user.sort_weight));
+
 				$(this).find("#panel-heading").click(function () {
 					window.location.href = '/user?username=' + user.username;
 				});
@@ -40,7 +43,6 @@ function appendSuggestion(data) {
 				}
 
 
-				console.log(user);
 				// BLOCK BUTTON
 				$(this).find("#block").click(function () {
 					block(user.username, _this);
