@@ -6,7 +6,7 @@ $('#ex1').slider({
 
 $('input#search_by_tag').on('itemAdded', function(event) {
 	 var tag = event.item;
-	 console.log("ADD: " + event.item + " VALS : " + $('input#interests').val());
+	 //console.log("ADD: " + event.item + " VALS : " + $('input#interests').val());
 	 $.post('profile',
 		 {
 				 field: "interests",
@@ -18,7 +18,7 @@ $('input#search_by_tag').on('itemAdded', function(event) {
  $('input#search_by_tag').on('itemRemoved', function(event) {
 		var tag = event.item;
 
-		console.log("RM: " + event.item + " VALS : " + $('input#interests').val());
+		//console.log("RM: " + event.item + " VALS : " + $('input#interests').val());
 		$.post('profile',
 			{
 					field: "interests",

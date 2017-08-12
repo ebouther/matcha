@@ -33,7 +33,7 @@ function formatMsg(message, username) {
 }
 
 function getContacts(cb) {
-  console.log("getContacts()");
+  //console.log("getContacts()");
   $.ajax({
        url: '/contacts',
        type: 'GET',
@@ -46,11 +46,11 @@ function getContacts(cb) {
    $("#contacts").empty();
    getContacts(function (contacts) {
      contacts.forEach(function (contact) {
-       console.log("CONTACT : " + contact);
+       //console.log("CONTACT : " + contact);
        if (contact)  {
          var $li = $('<li><a href="#" id="new_chat"><span>' + contact + '</span></a></li>');
-         console.log("OBJ : ");
-         console.log($li);
+         //console.log("OBJ : ");
+         //console.log($li);
          $li.click(function() {
              new_chat(contact);
          });
@@ -61,7 +61,7 @@ function getContacts(cb) {
  }
 
  function getNotifs(cb) {
-   console.log("getNotifs()");
+   //console.log("getNotifs()");
    $.ajax({
         url: '/notifs',
         type: 'GET',
@@ -77,7 +77,7 @@ function getContacts(cb) {
       if (notifs.length > 0)
         $('#notifs_b').css('background-color', 'red');
       notifs.forEach(function (notif) {
-        console.log("Notif: " + notif);
+        //console.log("Notif: " + notif);
         if (notif)  {
           var $li = $('<li><span>' + notif + '</span></li>');
           $("#notifications").append($li);
@@ -87,7 +87,7 @@ function getContacts(cb) {
   }
 
 function new_chat(username) {
-    console.log("NEW CHAT :" + username);
+    //console.log("NEW CHAT :" + username);
      var size = $( ".chat-window" ).last().css("right");
      if (size === undefined)
        size = -400;
@@ -172,7 +172,7 @@ function initChat() {
   });
 
   socket.on('message', function(msg){
-    console.log("RECEIVED MSG");
+    //console.log("RECEIVED MSG");
     chats.forEach(function(chat) {
       if (chat.username === msg.from) {
         var rcv = $('<div class="row msg_container base_receive"> \
@@ -193,7 +193,7 @@ function initChat() {
 
 
   $("#contacts-dropup").click(function () {
-    console.log("LENGTH : " + $("#contacts").find("li").length);
+    //console.log("LENGTH : " + $("#contacts").find("li").length);
     if ($("#contacts").find("li").length === 0) {
       $("#contacts").append($('<li><img src="https://pbs.twimg.com/profile_images/505877362873880576/mC7cTyN3.jpeg"></img></li>'));
     }
@@ -205,7 +205,7 @@ function initChat() {
 
 
   socket.on('notif', function(msg){
-    console.log("notif (" + msg + ")");
+    //console.log("notif (" + msg + ")");
     $('#notifs_b').css('background-color', 'red');
     fillNotifsList();
     fillContactList();
@@ -214,7 +214,7 @@ function initChat() {
   // OPEN NOTIF DROPDOWN
   $("#notifs_b").click(function () {
     $('#notifs_b').css('background-color', '');
-    console.log("LENGTH : ", $("#notifications").length);
+    //console.log("LENGTH : ", $("#notifications").length);
     if ($("#notifications").find("li").length === 0) {
       $("#notifications").append($('<li><span>¯\\_(ツ)_/¯</span></li>'));
     } else {

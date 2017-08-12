@@ -7,7 +7,7 @@ var loc_input = new google.maps.places.Autocomplete(document.getElementById('geo
 function appendSuggestion(data) {
 	if (data.users) {
 		data.users.forEach(function (user) {
-			console.log("USER : ", user);
+			//console.log("USER : ", user);
 
 			$("<div>").load("templates/user_mini.html", function() {
 				var _this = $(this);
@@ -91,7 +91,7 @@ $("#search").click(function () {
 		sort: $("select#sort option:checked").val()
 	}
 
-	console.log("SEARCH ", search);
+	//console.log("SEARCH ", search);
 
 	// var url = '/suggestions?' +
 	// 					'age_min='   + encodeURIComponent(search.age_min)   + '&' +
@@ -185,7 +185,7 @@ $('#ex1').slider({
 
 $('input#search_by_tag').on('itemAdded', function(event) {
 	 var tag = event.item;
-	 console.log("ADD: " + event.item + " VALS : " + $('input#interests').val());
+	 //console.log("ADD: " + event.item + " VALS : " + $('input#interests').val());
 	 $.post('profile',
 		 {
 				 field: "interests",
@@ -197,7 +197,7 @@ $('input#search_by_tag').on('itemAdded', function(event) {
  $('input#search_by_tag').on('itemRemoved', function(event) {
 		var tag = event.item;
 
-		console.log("RM: " + event.item + " VALS : " + $('input#interests').val());
+		//console.log("RM: " + event.item + " VALS : " + $('input#interests').val());
 		$.post('profile',
 			{
 					field: "interests",

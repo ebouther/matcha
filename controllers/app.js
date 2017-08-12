@@ -326,6 +326,7 @@ app.post('/profile', function (req, res) {
 
             break;
           }
+          res.end();
         });
 
         app.post('/register', function (req, res) {
