@@ -80,6 +80,25 @@ require('./auth.js')(app);
 
 // ------------------------------------------ //
 
+var entityMap = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;',
+  '/': '&#x2F;',
+  '`': '&#x60;',
+  '=': '&#x3D;'
+};
+
+function escapeHtml (string) {
+  return String(string).replace(/[&<>"'`=\/]/g, function (s) {
+    return entityMap[s];
+  });
+}
+
+
+
 app.post('/login', function (req, res) {
 
   req.db.collection("users").findOne({username: req.body.username}, {location:1, password: 1, _id: 0}, function(err, doc) {
@@ -406,7 +425,7 @@ app.post('/profile', function (req, res) {
                     from = req.session.username,
                     msg = req.body.msg;
                     if (to && from && msg) {
-                      var message = {to: to, from: from, message: msg};
+                      var message = {to: to, from: from, message: escapeHtml(msg)};
                       users.likeEachOther(req, from, to, function (like) {
                         if (like === true) {
                           users.saveMessage(req, message);

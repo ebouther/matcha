@@ -2,13 +2,30 @@ var socket = io();
 var chat_window = undefined;
 var chats = [];
 
+var entityMap = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;',
+  '/': '&#x2F;',
+  '`': '&#x60;',
+  '=': '&#x3D;'
+};
+
+function escapeHtml (string) {
+  return String(string).replace(/[&<>"'`=\/]/g, function (s) {
+    return entityMap[s];
+  });
+}
+
 function formatMsg(message, username) {
   var msg;
   if (message.to === username) {
     msg =  $('<div class="row msg_container base_sent"> \
                       <div class="col-md-10 col-xs-10"> \
                           <div class="messages msg_sent"> \
-                              <p>' + message.message +'</p> \
+                              <p>' + escapeHtml(message.message) +'</p> \
                               <time datetime="2009-11-13T20:00">Me</time> \
                           </div> \
                       </div> \
@@ -23,7 +40,7 @@ function formatMsg(message, username) {
                       </div> \
                       <div class="col-md-10 col-xs-10"> \
                           <div class="messages msg_receive"> \
-                              <p>' + message.message + '</p> \
+                              <p>' + escapeHtml(message.message) + '</p> \
                               <time datetime="2009-11-13T20:00">' + message.from + ' • 51 min</time> \
                           </div> \
                       </div> \
@@ -115,14 +132,14 @@ function new_chat(username) {
              $.post('message',
                {
                    to: username,
-                   msg: new_chat.find("#btn-input").val()
+                   msg: escapeHtml(new_chat.find("#btn-input").val())
                }
              );
 
              var msg = $('<div class="row msg_container base_sent"> \
                                <div class="col-md-10 col-xs-10"> \
                                    <div class="messages msg_sent"> \
-                                       <p>' + new_chat.find("#btn-input").val() +'</p> \
+                                       <p>' + escapeHtml(new_chat.find("#btn-input").val()) +'</p> \
                                        <time datetime="2009-11-13T20:00">Me</time> \
                                    </div> \
                                </div> \
