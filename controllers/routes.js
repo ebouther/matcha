@@ -206,9 +206,9 @@ router.post('/forgot', function (req, res) {
 
           if (req.session.username) {
             var contacts = [];
-            console.log("********   USERNAME : ", req.session.username);
+            // console.log("********   USERNAME : ", req.session.username);
             req.db.collection("users").findOne({username: req.session.username}, {password: 0, _id: 0}, function(err, me) {
-              console.log("********   ME : ", me);
+              // console.log("********   ME : ", me);
               var promises = [];
               if (me && me.like) {
                 me.like.forEach(function(username) {

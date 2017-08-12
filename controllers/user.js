@@ -195,7 +195,7 @@ function commonTags(me, b) {
 }
 
 function sortWeight(a, max) {
-	// console.log("DIST_INV : " + (max.dist_inv ? (a.dist_from_me ? 1 / a.dist_from_me : 1) / max.dist_inv : 0) * 100)
+	console.log("DIST_INV : " + (100 - ((max.dist ? (a.dist_from_me / max.dist) : 0) * 100)));
 	// console.log("COMMON TAGS : " + (max.commonTags ? a.commonTags / max.commonTags : 0) * 100)
 	// console.log("POPULARITY : " + (max.popularity ? a.popularity / max.popularity : 0) * 100)
 	//
@@ -207,16 +207,16 @@ function sortWeight(a, max) {
 		a.popularity = 0;
 
 	return (
-						((max.dist_inv ? ((a.dist_from_me ? 1 / a.dist_from_me : 1)) / max.dist_inv : 0) * 100
-						+ (max.commonTags ? a.commonTags / max.commonTags : 0) * 100
-						+ (max.popularity ? a.popularity / max.popularity : 0) * 100)
+						(100 - ((max.dist ? (a.dist_from_me / max.dist) : 0) * 100)
+						+ (max.commonTags ? a.commonTags / max.commonTags : 1) * 100
+						+ (max.popularity ? a.popularity / max.popularity : 1) * 100)
 						/ 3
 				 );
 }
 
 function weightedSort(data, req, res) {
 	var max = {
-		dist_inv   : 0,
+		min_dist   : 0,
 		commonTags : 0,
 		popularity : 0
 	};
@@ -229,8 +229,8 @@ function weightedSort(data, req, res) {
 			max.commonTags = user.commonTags;
 		if (user.popularity > max.popularity)
 			max.popularity = user.popularity;
-		if (user.dist_from_me ? 1 / user.dist_from_me : 1 > max.dist_inv)
-			max.dist_inv = user.dist_from_me ? 1 / user.dist_from_me : 1;
+		if (user.dist_from_me > max.dist_from_me)
+			max.dist = user.dist_from_me;
 	});
 
 	data.users.sort(function (a, b) {
@@ -281,9 +281,9 @@ function sortSuggestions (data, req, res) {
 
     case "tag":
       console.log("SORT BY TAG");
-      console.log("ME : ", data.me);
+      // console.log("ME : ", data.me);
       var my_tags = data.me.interests ? data.me.interests.split(",") : [];
-      console.log("BEFORE : ", data.users);
+      // console.log("BEFORE : ", data.users);
       data.users.sort(function (a, b) {
         var a_interests = a.interests ? a.interests.split(",") : [];
         var b_interests = b.interests ? b.interests.split(",") : [];

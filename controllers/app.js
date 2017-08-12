@@ -127,51 +127,60 @@ app.post('/profile', function (req, res) {
       {username: req.session.username},
       {$set: {email: req.body.content}}
     );
+    res.end();
     break;
     case "biography":
     req.db.collection("users").update(
       {username: req.session.username},
       {$set: {biography: req.body.content}}
     );
+    res.end();
     break;
     case "gender":
     req.db.collection("users").update(
       {username: req.session.username},
       {$set: {gender: req.body.content}}
     );
+    res.end();
     break;
     case "sex_pref":
     req.db.collection("users").update(
       {username: req.session.username},
       {$set: {sex_pref: req.body.content}}
     );
+    res.end();
     break;
     case "interests":
     req.db.collection("users").update(
       {username: req.session.username},
       {$set: {interests: req.body.content}}
     );
+    res.end();
     break;
     case "firstname":
     req.db.collection("users").update(
       {username: req.session.username},
       {$set: {firstname: req.body.content}}
     );
+    res.end();
     break;
     case "lastname":
     req.db.collection("users").update(
       {username: req.session.username},
       {$set: {lastname: req.body.content}}
     );
+    res.end();
     break;
     case "age":
     if (isNaN(req.body.content) || req.body.content < 18 || req.body.content > 120)
-    res.json({status: 500, message : "Age not valid"});
-    else
-    req.db.collection("users").update(
-      {username: req.session.username},
-      {$set: {age: req.body.content}}
-    );
+      res.json({status: 500, message : "Age not valid"});
+    else {
+      req.db.collection("users").update(
+        {username: req.session.username},
+        {$set: {age: req.body.content}}
+      );
+      res.end();
+    }
     break;
     case "picture":
     var obj = {};
@@ -182,18 +191,20 @@ app.post('/profile', function (req, res) {
       {username: req.session.username},
       {$set: obj}
     );
+    res.end();
     break;
     case "profile_pic":
     req.db.collection("users").update(
       {username: req.session.username},
       {$set: {profile_pic: req.body.content}}
     );
+    res.end();
     break;
     case "getNavLoc":
     console.log("NAV LOCATION");
     req.db.collection("users").findOne(
       {username: req.session.username}, function(err, user) {
-        console.log("USER : ", user);
+        // console.log("USER : ", user);
         if (user && user.lat_lng)
           res.json({msg: 0});
         else
@@ -206,12 +217,14 @@ app.post('/profile', function (req, res) {
       {username: req.session.username},
       {$set: {location: req.body.content}}
     );
+    res.end();
     break;
     case "lat_lng":
     req.db.collection("users").update(
       {username: req.session.username},
       {$set: {lat_lng: req.body.content}}
     );
+    res.end();
     break;
     case "like":
     console.log("*** LIKE REQUEST");
@@ -277,6 +290,7 @@ app.post('/profile', function (req, res) {
 
               }
             });
+            res.end();
             break;
             case "block":
               if (req.body.content) {
@@ -297,6 +311,7 @@ app.post('/profile', function (req, res) {
                     }
                   });
               }
+            res.end();
             break;
 
             case "report":
@@ -323,10 +338,9 @@ app.post('/profile', function (req, res) {
 
                 }
               });
-
+            res.end();
             break;
           }
-          res.end();
         });
 
         app.post('/register', function (req, res) {

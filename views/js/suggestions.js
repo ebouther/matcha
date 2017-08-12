@@ -15,6 +15,8 @@ function appendSuggestion(data) {
 				$(this).find("#panel-title").text(user.firstname + " " + user.lastname);
 				$(this).find("#profile_pic").attr("src", user["picture" + user.profile_pic] ? user["picture" + user.profile_pic] : "img/profile_default.jpg");
 				$(this).find("#affinity").text(Math.round(user.sort_weight));
+				$(this).find("#dist").text(Math.round(user.dist_from_me));
+				$(this).find("#common_tags").text(Math.round(user.commonTags));
 
 				$(this).find("#panel-heading").click(function () {
 					window.location.href = '/user?username=' + user.username;
@@ -28,7 +30,7 @@ function appendSuggestion(data) {
 					var $like_b = $('<a data-original-title="Like" data-toggle="tooltip" type="button" class="like_b btn btn-sm btn-danger"><i class="glyphicon glyphicon-heart"></i></a>');
 
 					// => Init color
-					if (data.me.like.indexOf(user.username) !== -1) {
+					if (data.me.like && data.me.like.indexOf(user.username) !== -1) {
 						$like_b.css("background-color", "white");
 						$like_b.children().css("color", "red");
 					}
