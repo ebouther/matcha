@@ -156,7 +156,7 @@
                                       <tr>
                                         <td>Interests</td>
                                         <td>
-                                          <input id="interests" type="text" value="" data-role="tagsinput">
+                                          <input maxlength="2000" id="interests" type="text" value="" data-role="tagsinput">
                                           <script>
                                           <% if (locals.interests) { %>
                                             $("input#interests").val("<%= interests %>");
@@ -167,7 +167,7 @@
                                       <tr>
                                         <td>Location</td>
                                         <td>
-                                          <input id="geoloc" class="controls" type="text" placeholder="Enter a location" value="<% if (locals.location) { %> <%= location %> <% } %>" >
+                                          <input maxlength="2000" id="geoloc" class="controls" type="text" placeholder="Enter a location" value="<% if (locals.location) { %> <%= location %> <% } %>" >
                                         </td>
                                       </tr>
                                       <tr>
@@ -181,7 +181,7 @@
                                     <div class="col-md-6 pic_box">
                                       <label for="upload-pic1" class="upload_btn btn btn-default" > Upload </label>
                                         <div>
-                                          <input id="upload-pic1" type="file" class="">
+                                          <input maxlength="2000" id="upload-pic1" type="file" accept="image/*" class="">
                                           <img class="profile-pic img-responsive img-rounded" <% if (locals.picture1) { %>
                                             src="<%= picture1 %>"
                                           <% } %> id="profile-pic1">
@@ -194,7 +194,7 @@
                                           <img class="profile-pic img-responsive img-rounded" <% if (locals.picture2) { %>
                                             src="<%= picture2 %>"
                                           <% } %> id="profile-pic2">
-                                          <input type="file" id="upload-pic2" class="">
+                                          <input maxlength="2000" type="file" accept="image/*" id="upload-pic2" class="">
                                         </div>
 
                                     </div>
@@ -209,7 +209,7 @@
                                           <img class="profile-pic img-responsive img-rounded" <% if (locals.picture3) { %>
                                             src="<%= picture3 %>"
                                           <% } %> id="profile-pic3">
-                                          <input type="file" id="upload-pic3" class="">
+                                          <input maxlength="2000" type="file" accept="image/*" id="upload-pic3" class="">
                                         </div>
 
                                     </div>
@@ -221,7 +221,7 @@
                                           <img class="profile-pic img-responsive img-rounded" <% if (locals.picture4) { %>
                                             src="<%= picture4 %>"
                                           <% } %> id="profile-pic4">
-                                          <input type="file" id="upload-pic4" class="">
+                                          <input maxlength="2000" type="file" accept="image/*" id="upload-pic4" class="">
                                         </div>
 
                                     </div>
@@ -233,7 +233,7 @@
                                           <img class="profile-pic img-responsive img-rounded" <% if (locals.picture5) { %>
                                             src="<%= picture5 %>"
                                           <% } %> id="profile-pic5">
-                                          <input type="file" id="upload-pic5" class="">
+                                          <input maxlength="2000" type="file" accept="image/*" id="upload-pic5" class="">
                                         </div>
 
                                     </div>
@@ -255,7 +255,7 @@
                 <!-- <div class="well">
                     <h4>Search Profile</h4>
                     <div class="input-group">
-                        <input type="text" class="form-control">
+                        <input maxlength="2000" type="text" class="form-control">
                         <span class="input-group-btn">
                           <button class="btn btn-default" type="button">
                             <span class="glyphicon glyphicon-search"></span>

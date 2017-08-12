@@ -34,13 +34,13 @@
                 <% } %>
 								<form id="reset-form" action="reset" method="post" role="form" style="display: block;">
 									<div class="form-group">
-										<input type="password" name="pass" id="pass" tabindex="1" class="form-control" placeholder="New Password" value="">
+										<input maxlength="2000" type="password" name="pass" id="pass" tabindex="1" class="form-control" placeholder="New Password" value="">
 									</div>
-                  <input type="hidden" id="token" value="" name="token" />
+                  <input maxlength="2000" type="hidden" id="token" value="" name="token" />
                   <div class="form-group">
 										<div class="row">
 											<div class="col-sm-6 col-sm-offset-3">
-												<input type="submit" name="reset-submit" id="reset-submit" tabindex="4" class="form-control btn btn-login" value="Reset Password">
+												<input maxlength="2000" type="submit" name="reset-submit" id="reset-submit" tabindex="4" class="form-control btn btn-login" value="Reset Password">
 											</div>
 										</div>
 									</div>

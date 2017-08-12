@@ -78,13 +78,18 @@ $(document).ready(function() {
     });
 
     function readURL(input, img_id, index) {
-        if (input.files && input.files[0]) {
+        //var ext = reader.result.substring(reader.result.lastIndexOf('.') + 1).toLowerCase();
+        // console.log(input.files[0]);
+        if (input.files && input.files[0]
+          && input.files[0].size < 2000000
+          && input.files[0].type.length > 6 && input.files[0].type.substring(0, 6) === "image/")
+        {
+
             var reader = new FileReader();
 
             reader.onload = function (e) {
                 $(img_id).attr('src', e.target.result).fadeIn('slow');
                 // //console.log("SIZE:" + input.files[0].size);
-                if (input.files[0].size < 2000000) {
                   $.post('profile',
                     {
                       field: "picture",
@@ -92,12 +97,11 @@ $(document).ready(function() {
                       index: index
                     }
                   );
-                } else {
-                  alert("Image too big to be saved");
-                }
             }
             reader.readAsDataURL(input.files[0]);
             //console.log("INPUT FILE " + JSON.stringify(input.files[0]));
+        } else {
+          alert("Please select a valid size.");
         }
     }
 
@@ -129,7 +133,7 @@ function editProfileField(button_id, value_id) {
   $(button_id).click(function() {
     var content = $('#' + value_id).text();
     $('#' + value_id).html('');
-    $('<input></input>')
+    $('<input maxlength="2000"></input>')
         .attr({
             'type': 'text',
             'name': 'fname',

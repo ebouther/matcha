@@ -145,7 +145,7 @@
                                           <td>Interests</td>
                                           <td>
                                             <div id="readonly_tag" class="col-lg-6">
-                                              <input id="interests" type="text" value="" data-role="tagsinput">
+                                              <input maxlength="2000" id="interests" type="text" value="" data-role="tagsinput">
                                             </div>
                                             <script>
                                             <% if (user.interests) { %>
@@ -210,7 +210,7 @@
                 <!-- <div class="well">
                     <h4>Search Profile</h4>
                     <form action="suggestions" method="get" class="input-group">
-                        <input name="username" type="text" class="form-control">
+                        <input maxlength="2000" name="username" type="text" class="form-control">
                         <span class="input-group-btn">
                           <button class="btn btn-default" type="submit">
                             <span class="glyphicon glyphicon-search"></span>
