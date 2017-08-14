@@ -5,6 +5,8 @@ module.exports = function (router) {
 	var request = require('request');
 	var simple_oauth2 = require('simple-oauth2');
 
+	var ft_user = require('./user');
+
 	const github_credentials = {
 		client: {
 			id: '57040590ab486c7f6a6c',
@@ -138,6 +140,7 @@ module.exports = function (router) {
 								'username'		: api_resp.login,
 								'oauth'				: 'github'
 							});
+							ft_user.saveIpLocation(req.db, req, res);
 						}
 					});
 				}
@@ -194,6 +197,7 @@ module.exports = function (router) {
 								'username'		: api_resp.login,
 								'oauth'				: "42"
 							});
+							ft_user.saveIpLocation(req.db, req, res);
 						}
 					});
 
@@ -249,6 +253,7 @@ module.exports = function (router) {
 								'username'			: api_resp.name,
 								'oauth'				: "google"
 							});
+							ft_user.saveIpLocation(req.db, req, res);
 						}
 					});
 				}
@@ -303,6 +308,7 @@ module.exports = function (router) {
 								'username'			: api_resp.name,
 								'oauth'				: "reddit"
 							});
+							ft_user.saveIpLocation(req.db, req, res);
 						}
 					});
 				}

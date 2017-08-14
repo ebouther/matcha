@@ -131,9 +131,8 @@ app.post('/login', function (req, res) {
         if (!doc.location || doc.location === "") {
           console.log("NO LOCATION SAVED : ", doc);
           users.saveIpLocation(req.db, req, res);
-        } else {
-          res.redirect('/');
         }
+        res.redirect('/');
       }
     });
   });

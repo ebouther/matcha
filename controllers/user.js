@@ -73,7 +73,6 @@ exports.saveIpLocation = function (db, req, res) {
         );
       }
     }
-    res.redirect('/');
   });
 }
 
@@ -176,7 +175,7 @@ function distanceBetween(a, b)
 	var b_lat_lng = b.lat_lng ? b.lat_lng : b.ip_lat_lng;
 
 	if (!a_lat_lng || !b_lat_lng)
-		return 20033; //earth circonference : 40075
+		return 0;//20033; //earth circonference : 40075
 	else
 		return getDistanceFromLatLonInKm(a_lat_lng[0], a_lat_lng[1], b_lat_lng[0], b_lat_lng[1]);
 
