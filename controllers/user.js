@@ -363,14 +363,14 @@ function filterSuggestions (data, req, res) {
 	      }
 
 	      if (search.pop_min && search.pop_min !== ""
-	          && (!user.pop || user.pop < search.pop_min))
+	          && (!user.popularity || user.popularity < search.pop_min))
 	      {
 	        console.log("NOT ENOUGH POP - REMOVE USER : ", user.username);
 					return 0;
 	      }
 
 	      if (search.pop_max && search.pop_max !== ""
-	          && (!user.pop || user.pop > search.pop_max))
+	          && (!user.popularity || user.popularity > search.pop_max))
 	      {
 	        console.log("TOO POP - REMOVE USER : ", user.username);
 					return 0;
