@@ -344,64 +344,68 @@ function filterSuggestions (data, req, res) {
 	// console.log("USERS : ", data.users);
 	// console.log("SEARCH : ", search);
 
-	if (search)
-  data.users.forEach(function (user, i) {
+	console.log("USERS LEN", data.users.length);
 
-      if (search.age_min && search.age_min !== ""
-          && (!user.age || user.age < search.age_min))
-      {
-        console.log("TOO YOUNG - REMOVE USER : ", i);
-        data.users.splice(i, 1);
-      }
-      if (search.age_max && !isNaN(search.age_max)
-          && (!user.age || user.age > parseInt(search.age_max)))
-      {
-        console.log("TOO OLD - REMOVE USER : ", user.username);
-        data.users.splice(i, 1);
-      }
+	if (search) {
+	  data.users = data.users.filter(function (user) {
 
-      if (search.pop_min && search.pop_min !== ""
-          && (!user.pop || user.pop < search.pop_min))
-      {
-        console.log("NOT ENOUGH POP - REMOVE USER : ", user.username);
-        data.users.splice(i, 1);
-      }
+	      if (search.age_min && search.age_min !== ""
+	          && (!user.age || user.age < search.age_min))
+	      {
+	        console.log("TOO YOUNG - REMOVE USER : ", i);
+	        return 0;
+	      }
+	      if (search.age_max && !isNaN(search.age_max)
+	          && (!user.age || user.age > parseInt(search.age_max)))
+	      {
+	        console.log("TOO OLD - REMOVE USER : ", user.username);
+					return 0;
+	      }
 
-      if (search.pop_max && search.pop_max !== ""
-          && (!user.pop || user.pop > search.pop_max))
-      {
-        console.log("TOO POP - REMOVE USER : ", user.username);
-        data.users.splice(i, 1);
-      }
+	      if (search.pop_min && search.pop_min !== ""
+	          && (!user.pop || user.pop < search.pop_min))
+	      {
+	        console.log("NOT ENOUGH POP - REMOVE USER : ", user.username);
+					return 0;
+	      }
 
-      if (user.interests) {
-        var user_interests = user.interests ? user.interests.split(",") : [];
-        interests.forEach(function (interest) {
-          if (user_interests.indexOf(interest) === -1)
-          {
-            console.log("MISSING INTEREST :", interest, "- REMOVE USER : ", user.username);
-            data.users.splice(i, 1);
-          }
-        });
-      } else if (interests.length > 0) {
-        console.log("MISSING INTEREST - REMOVE USER : ", user.username);
-        data.users.splice(i, 1);
-      }
+	      if (search.pop_max && search.pop_max !== ""
+	          && (!user.pop || user.pop > search.pop_max))
+	      {
+	        console.log("TOO POP - REMOVE USER : ", user.username);
+					return 0;
+	      }
 
-      if (search.lat && search.lng
-          && search.lat !== "" && search.lng !== ""
-          && (!user.lat_lng || search.lat !== user.lat_lng[0] || search.lng !== user.lat_lng[1]))
-      {
-        console.log("MISSING LOCATION - REMOVE USER : ", user.username);
-        data.users.splice(i, 1);
-      }
+	      if (user.interests) {
+	        var user_interests = user.interests ? user.interests.split(",") : [];
+	        interests.forEach(function (interest) {
+	          if (user_interests.indexOf(interest) === -1)
+	          {
+	            console.log("MISSING INTEREST :", interest, "- REMOVE USER : ", user.username);
+							return 0;
+	          }
+	        });
+	      } else if (interests.length > 0) {
+	        console.log("MISSING INTEREST - REMOVE USER : ", user.username);
+					return 0;
+	      }
 
-  });
-		if (req.body.search && req.body.search.sort) {
-  		sortSuggestions(data, req, res);
-		} else {
-			weightedSort(data, req, res);
-		}
+	      if (search.lat && search.lng
+	          && search.lat !== "" && search.lng !== ""
+	          && (!user.lat_lng || search.lat !== user.lat_lng[0] || search.lng !== user.lat_lng[1]))
+	      {
+	        console.log("MISSING LOCATION - REMOVE USER : ", user.username);
+					return 0;
+	      }
+				return 1;
+
+	  });
+	}
+	if (req.body.search && req.body.search.sort) {
+		sortSuggestions(data, req, res);
+	} else {
+		weightedSort(data, req, res);
+	}
 }
 
 exports.loadSuggestions = function (db, req, res) {
