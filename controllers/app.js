@@ -431,7 +431,7 @@ app.post('/profile', function (req, res) {
 
                           req.db.collection("users").findOne(
                             {username: req.body.to}, {}, function (err, user) {
-                              if (!(user && user.block && user.block.indexOf(req.session) !== -1)) { // if not blocked by receiver then emit
+                              if (!(user && user.block && user.block.indexOf(req.session.username) !== -1)) { // if not blocked by receiver then emit
                                 Object.keys(io.sockets.sockets).forEach(function(socket_id) {
                                   var user = io.sockets.sockets[socket_id];
                                   if (user.request.session.username === to) {
