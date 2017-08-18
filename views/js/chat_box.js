@@ -41,7 +41,7 @@ function formatMsg(message, username) {
                       <div class="col-md-10 col-xs-10"> \
                           <div class="messages msg_receive"> \
                               <p>' + escapeHtml(message.message) + '</p> \
-                              <time datetime="2009-11-13T20:00">' + message.from + ' • 51 min</time> \
+                              <time>' + message.from + '</time> \
                           </div> \
                       </div> \
                     </div>');
@@ -199,7 +199,7 @@ function initChat() {
                         <div class="col-md-10 col-xs-10"> \
                             <div class="messages msg_receive"> \
                                 <p>' + msg.message + '</p> \
-                                <time datetime="2009-11-13T20:00">' + msg.from + ' • 51 min</time> \
+                                <time>' + msg.from + '</time> \
                             </div> \
                         </div> \
                       </div>');
