@@ -15,6 +15,7 @@ function appendSuggestion(data) {
 				$(this).find("#panel-title").text(user.firstname + " " + user.lastname);
 				$(this).find("#profile_pic").attr("src", user["picture" + user.profile_pic] ? user["picture" + user.profile_pic] : "img/profile_default.jpg");
 
+				console.log("USER : ", user);
 				if (user.sort_weight !== undefined)
 					$(this).find("#affinity").text(Math.round(user.sort_weight));
 				else
@@ -27,7 +28,10 @@ function appendSuggestion(data) {
 					$(this).find("#common_tags").text(Math.round(user.commonTags));
 				else
 					$(this).find("#common_tags_container").css("display", "none");
-
+				if (user.popularity !== undefined)
+					$(this).find("#popularity").text(Math.round(user.popularity));
+				if (user.age !== undefined)
+					$(this).find("#age").text(user.age);
 
 				$(this).find("#panel-heading").click(function () {
 					window.location.href = '/user?username=' + user.username;

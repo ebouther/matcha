@@ -258,10 +258,10 @@ function sortSuggestions (data, req, res) {
         if (!a.age && !b.age)
           return 0;
         else if (!a.age)
-          return -1;
-        else if (!b.age)
           return 1;
-        return (a.age - b.age);
+        else if (!b.age)
+          return -1;
+        return (b.age - a.age);
       });
       break;
 
@@ -271,10 +271,10 @@ function sortSuggestions (data, req, res) {
         if (!a.popularity && !b.popularity)
           return 0;
         else if (!a.popularity)
-          return -1;
-        else if (!b.popularity)
           return 1;
-        return (a.popularity - b.popularity);
+        else if (!b.popularity)
+          return -1;
+        return (b.popularity - a.popularity);
       });
       break;
 
@@ -286,18 +286,17 @@ function sortSuggestions (data, req, res) {
       data.users.sort(function (a, b) {
         var a_interests = a.interests ? a.interests.split(",") : [];
         var b_interests = b.interests ? b.interests.split(",") : [];
-        var a_common_int = 0;
-        var b_common_int = 0;
+        a.commonTags = 0;
+        b.commonTags = 0;
 
         my_tags.forEach(function (interest) {
           if (a_interests.indexOf(interest) !== -1)
-            a_common_int++;
+            a.commonTags++;
           if (b_interests.indexOf(interest) !== -1)
-            b_common_int++;
+            b.commonTags++;
         });
 
-        console.log("COMMON ", a_common_int,  b_common_int);
-        return (b_common_int - a_common_int);
+        return (b.commonTags - a.commonTags);
       });
       console.log("AFTER : ", data.users);
       break;
@@ -319,13 +318,11 @@ function sortSuggestions (data, req, res) {
         console.log("A LAT LNG : ", a_lat_lng);
         console.log("B LAT LNG : ", b_lat_lng);
 
-        var a_dist = getDistanceFromLatLonInKm(a_lat_lng[0], a_lat_lng[1], lat_lng[0], lat_lng[1]);
-        var b_dist = getDistanceFromLatLonInKm(b_lat_lng[0], b_lat_lng[1], lat_lng[0], lat_lng[1]);
+        a.dist_from_me = getDistanceFromLatLonInKm(a_lat_lng[0], a_lat_lng[1], lat_lng[0], lat_lng[1]);
+        b.dist_from_me = getDistanceFromLatLonInKm(b_lat_lng[0], b_lat_lng[1], lat_lng[0], lat_lng[1]);
 
-        console.log("A_DIST : ", a_dist);
-        console.log("B_DIST : ", b_dist);
 
-        return (a_dist - b_dist);
+        return (a.dist_from_me - b.dist_from_me);
       });
       break;
   }
@@ -351,7 +348,7 @@ function filterSuggestions (data, req, res) {
 	      if (search.age_min && search.age_min !== ""
 	          && (!user.age || user.age < search.age_min))
 	      {
-	        console.log("TOO YOUNG - REMOVE USER : ", i);
+	        console.log("TOO YOUNG - REMOVE USER : ");
 	        return 0;
 	      }
 	      if (search.age_max && !isNaN(search.age_max)
