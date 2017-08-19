@@ -8,7 +8,6 @@ function appendSuggestion(data) {
 	if (data.users) {
 		data.users.forEach(function (user) {
 			//console.log("USER : ", user);
-
 			$("<div>").load("templates/user_mini.html", function() {
 				var _this = $(this);
 

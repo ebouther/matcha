@@ -250,10 +250,11 @@ app.post('/profile', function (req, res) {
       {username: req.session.username},
       {like: 1, profile_pic: 1},
       function(err, user) {
-        if (user.profile_pic
-          && user.profile_pic !== ""
-          && user.like
-          && user.like.indexOf(req.body.content) !== -1) // If already liked
+          if (user.profile_pic && user.profile_pic !== "")
+              res.end();
+
+          if (user.like
+            && user.like.indexOf(req.body.content) !== -1) // If already liked
           {
             req.db.collection("users").update( // Remove from like list
               {username: req.session.username},
@@ -267,13 +268,18 @@ app.post('/profile', function (req, res) {
                 io.to(socket_id).emit('notif', message);
               }
             });
+            console.log("UPDATE HISTORY 1 : ", req.body.content);
+            var unlike_message = "<a href='/user?username=" + req.session.username + "'>Unliked by " + req.session.username + "</a>";
+            console.log("UNLIKE MESSAGE : ", unlike_message);
             req.db.collection("users").update(
-              { username: req.body.content },
-              { $push: {"notification": message} }
+              {username: req.body.content},
+              {$push: {history: unlike_message, notification: message},
+              $inc: {'popularity': -2}}, function(err, doc) {
+                console.log("ERR : ", err);
+              }
             );
 
           } else {
-
             req.db.collection("users").update(
               {username: req.session.username},
               {$push: {like: req.body.content}}
@@ -296,11 +302,11 @@ app.post('/profile', function (req, res) {
                       io.to(socket_id).emit('notif', message);
                     }
                   });
-
+                  console.log("UPDATE HISTORY : ", req.body.content);
                   req.db.collection("users").update(
                     {username: req.body.content},
-                    {$push: {"history": "<a href='/user?username=" + req.session.username + "'>Liked by " + req.session.username + "</a>"},
-                    $push: {"notification": message},
+                    {$push: {"history": "<a href='/user?username=" + req.session.username + "'>Liked by " + req.session.username + "</a>",
+                             "notification": message},
                     $inc: {'popularity': 2}}
                   );
 
