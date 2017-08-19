@@ -340,8 +340,8 @@ function filterSuggestions (data, req, res) {
 	// console.log("USERS : ", data.users);
 	// console.log("SEARCH : ", search);
 
-	console.log("USERS LEN", data.users.length);
-
+	// console.log("USERS LEN", data.users.length);
+	console.log("SEARCH", search);
 	if (search) {
 	  data.users = data.users.filter(function (user) {
 
@@ -372,18 +372,18 @@ function filterSuggestions (data, req, res) {
 					return 0;
 	      }
 
-	      if (user.interests) {
+	      if (search.interests) {
 	        var user_interests = user.interests ? user.interests.split(",") : [];
-	        interests.forEach(function (interest) {
+					var del_usr = 0;
+	        search.interests.split(",").forEach(function (interest) {
 	          if (user_interests.indexOf(interest) === -1)
 	          {
 	            console.log("MISSING INTEREST :", interest, "- REMOVE USER : ", user.username);
-							return 0;
+							del_usr = 1;
 	          }
 	        });
-	      } else if (interests.length > 0) {
-	        console.log("MISSING INTEREST - REMOVE USER : ", user.username);
-					return 0;
+					if (del_usr)
+						return 0;
 	      }
 
 	      if (search.lat && search.lng

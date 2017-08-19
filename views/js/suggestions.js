@@ -15,7 +15,6 @@ function appendSuggestion(data) {
 				$(this).find("#panel-title").text(user.firstname + " " + user.lastname);
 				$(this).find("#profile_pic").attr("src", user["picture" + user.profile_pic] ? user["picture" + user.profile_pic] : "img/profile_default.jpg");
 
-				console.log("USER : ", user);
 				if (user.sort_weight !== undefined)
 					$(this).find("#affinity").text(Math.round(user.sort_weight));
 				else
