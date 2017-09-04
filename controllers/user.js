@@ -408,28 +408,28 @@ exports.loadSuggestions = function (db, req, res) {
   req.db.collection("users").findOne({username: req.session.username}, {password: 0, _id: 0}, function(err, me) {
       switch (me.sex_pref) {
         case "Hetero":
-          if (me.gender === "Male") {
+          if (me.gender === "Female") {
             console.log("DBG 1");
-              req.db.collection("users").find({gender: "Female", username: {$ne: req.session.username}}, {password: 0, _id: 0}).toArray(function(err, doc) {
+              req.db.collection("users").find({gender: "Male", username: {$ne: req.session.username}}, {password: 0, _id: 0}).toArray(function(err, doc) {
                 filterSuggestions({users: doc, me: me}, req, res);
               });
           } else {
             console.log("DBG 2");
-            req.db.collection("users").find({gender: "Male", username: {$ne: req.session.username}}, {password: 0, _id: 0}).toArray(function(err, doc) {
+            req.db.collection("users").find({gender: "Female", username: {$ne: req.session.username}}, {password: 0, _id: 0}).toArray(function(err, doc) {
               filterSuggestions({users: doc, me: me}, req, res);
             });
           }
         break;
         case "Gay":
-          if (me.gender === "Male") {
+          if (me.gender === "Female") {
             console.log("DBG 3");
-            req.db.collection("users").find({gender: "Male", username: {$ne: req.session.username}}, {password: 0, _id: 0}).toArray(function(err, doc) {
+            req.db.collection("users").find({gender: "Female", username: {$ne: req.session.username}}, {password: 0, _id: 0}).toArray(function(err, doc) {
               filterSuggestions({users: doc, me: me}, req, res);
               //res.render(__dirname + '/../views/templates/suggestions.ejs', {users: doc, me: me});
             });
           } else {
             console.log("DBG 4");
-            req.db.collection("users").find({gender: "Female", username: {$ne: req.session.username}}, {password: 0, _id: 0}).toArray(function(err, doc) {
+            req.db.collection("users").find({gender: "Male", username: {$ne: req.session.username}}, {password: 0, _id: 0}).toArray(function(err, doc) {
               filterSuggestions({users: doc, me: me}, req, res);
               //res.render(__dirname + '/../views/templates/suggestions.ejs', {users: doc, me: me});
             });
